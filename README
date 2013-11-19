@@ -4,3 +4,13 @@ Database name: sql322886
 Database user: sql322886
 Database password: wD5*sF5%
 Port number: 3306
+
+
+Right now, I'm just gonna wokr with sqlite3 in a local db file.
+
+fb authentication: http://pythonhosted.org/Flask-Social/
+
+The backend is structured in: Flask + Jinja2
+
+frontend: RequireJS + JQuery + backboneJS(include underscore.js)
+
