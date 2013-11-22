@@ -14,6 +14,7 @@ create table user(
 	last_name text not null,
 	user_name text not null,
 	password text not null,
+	gender integer not null,
 	email text not null
 );
 

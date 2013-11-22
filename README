@@ -14,3 +14,10 @@ The backend is structured in: Flask + Jinja2
 
 frontend: RequireJS + JQuery + backboneJS(include underscore.js)
 
+
+
+Login:
+http://stackoverflow.com/questions/13428708/best-way-to-make-flask-logins-login-required-the-default
+http://stackoverflow.com/questions/13896650/how-to-make-a-python-decorator-function-in-flask-with-arguments-for-authorizati
+
+http://stackoverflow.com/questions/14335892/flask-login-mechanisim-to-authenticate-per-token-my-calls
