@@ -1,4 +1,5 @@
 # all the imports
+from model.users import Users
 import sqlite3
 import os
 from flask import Flask, request, session, g, redirect, url_for, \
@@ -108,5 +109,9 @@ def community():
 # launch
 #----------------------------------------   
 if __name__ == '__main__':
-   port = int(os.environ.get("PORT", 5000))
-   app.run(host='0.0.0.0', port=port)
+   u = Users()
+   #u.add_user()
+   users = u.get_users()
+   print users
+   #port = int(os.environ.get("PORT", 5000))
+   #app.run(host='0.0.0.0', port=port)
