@@ -1,8 +1,13 @@
 # all the imports
+from models.users import Users
 from controllers import account
 import os
 from flask import Flask, request, session, g, redirect, url_for, \
    abort, render_template, flash
+from flask.ext.login import LoginManager
+
+
+
 
 #----------------------------------------
 # initialization
@@ -16,6 +21,8 @@ PASSWORD = 'default'
 app = Flask(__name__)
 app.config.from_object(__name__)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 #Todo: model abstraction for database access s
 def connect_db():	
@@ -25,7 +32,6 @@ def connect_db():
 def page_not_found(e):
     return render_template('404.html'), 404
 	
-
 
 #----------------------------------------
 # controllers
@@ -86,22 +92,26 @@ def signup():
    return render_template('signup.html')
 '''
 
+@login_manager.user_loader
+def load_user(id):
+   users = Users()
+   return users.get_user(int(id))
+
 @app.route('/home')
 def home():
    return render_template('home.html')
 
-@app.route('/profile')
-def profile():
-   return render_template('profile.html')
 	
 @app.route('/community')
 def community():
    return render_template('communiy_list.html')
  
 #bind URL
-app.add_url_rule('/login', methods=['GET', 'POST'], view_func=account.login)
-app.add_url_rule('/logout', methods=['GET'], view_func=account.logout)
-app.add_url_rule('/signup', methods=['GET', 'POST'], view_func=account.signup)
+app.add_url_rule('/login',    methods=['GET', 'POST'],   view_func=account.login)
+app.add_url_rule('/logout',   methods=['GET'],           view_func=account.logout)
+app.add_url_rule('/signup',   methods=['GET', 'POST'],   view_func=account.signup)
+app.add_url_rule('/profile',  methods=['GET'],           view_func=account.profile)
+
 
 #----------------------------------------
 # launch

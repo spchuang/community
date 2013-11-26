@@ -5,8 +5,6 @@ class Model:
       self.db_name         = db_name
       self.name            = name
       (self.conn, self.cursor) = DB.get_cursor('community')
-      
-
    
    def __del__ (self):
       self.conn.close()
