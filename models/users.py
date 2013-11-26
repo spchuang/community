@@ -7,13 +7,13 @@ class Users(Model):
    def get_user_list(self):
       print "."
    
-   def add_user(self):
+   def add_user(self, u):
       try:
          self.cursor.execute("""INSERT INTO users \
                               (first_name,last_name,user_name,password,email,gender) \
                               VALUES \
                               (%s,%s,%s,%s,%s,%s)""", 
-                              ("test","test","test","test","test",0))
+                              (u.first_name,u.last_name, u.user_name,u.passowrd,u.email,u.gender))
          self.conn.commit()
       except Exception, e:
          print repr(e)

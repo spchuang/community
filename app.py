@@ -1,6 +1,5 @@
 # all the imports
-from model.users import Users
-import sqlite3
+from controllers import account
 import os
 from flask import Flask, request, session, g, redirect, url_for, \
    abort, render_template, flash
@@ -22,19 +21,11 @@ app.config.from_object(__name__)
 def connect_db():	
    return sqlite3.connect(app.config['DATABASE'])
 	
-#@app.errorhandler(404)
-#def page_not_found(e):
-#    return render_template('404.html'), 404
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 	
-@app.before_request
-def before_request():
-   g.db = connect_db()
 
-@app.teardown_request
-def teardown_request(exception):
-   db = getattr(g, 'db', None)
-   if db is not None:
-      db.close()
 
 #----------------------------------------
 # controllers
@@ -54,7 +45,8 @@ def add_entry():
    g.db.commit()
    flash('New entry was successfully posted')
    return redirect(url_for('show_entries'))
-	
+
+'''
 @app.route('/login', methods=['GET', 'POST'])
 def login():
    error = None
@@ -92,7 +84,8 @@ def signup():
       
    #return redirect(url_for('/home'))
    return render_template('signup.html')
-	
+'''
+
 @app.route('/home')
 def home():
    return render_template('home.html')
@@ -105,13 +98,20 @@ def profile():
 def community():
    return render_template('communiy_list.html')
  
+#bind URL
+app.add_url_rule('/login', methods=['GET', 'POST'], view_func=account.login)
+app.add_url_rule('/logout', methods=['GET'], view_func=account.logout)
+app.add_url_rule('/signup', methods=['GET', 'POST'], view_func=account.signup)
+
 #----------------------------------------
 # launch
 #----------------------------------------   
+
+
 if __name__ == '__main__':
-   u = Users()
+   #u = Users()
    #u.add_user()
-   users = u.get_users()
-   print users
-   #port = int(os.environ.get("PORT", 5000))
-   #app.run(host='0.0.0.0', port=port)
+   #users = u.get_users()
+   #print users
+   port = int(os.environ.get("PORT", 5000))
+   app.run(host='0.0.0.0', port=port)
