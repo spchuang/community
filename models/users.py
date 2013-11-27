@@ -1,17 +1,20 @@
 from model import Model
-
+import bcrypt
 
 class Users(Model):
    def __init__(self):
       Model.__init__(self, db_name='community', name='users')
    
    def add_user(self, u):
+   
       try:
+         #generate hashed password
+         u['password'] = bcrypt.hashpw(u['password'],bcrypt.gensalt())
          self.cursor.execute("""INSERT INTO users \
                               (first_name,last_name,user_name,password,email,gender) \
                               VALUES \
                               (%s,%s,%s,%s,%s,%s)""", 
-                              (u.first_name,u.last_name, u.user_name,u.passowrd,u.email,u.gender))
+                              (u['first_name'],u['last_name'], u['user_name'],u['password'],u['email'],u['gender']))
          self.conn.commit()
       except Exception, e:
          print repr(e)
@@ -19,10 +22,14 @@ class Users(Model):
       
    def get_user_id(self, user_name, password):
       try:
-         self.cursor.execute("SELECT id FROM users WHERE user_name=%s AND password=%s",(user_name, password))
+         
+         self.cursor.execute("SELECT id,password FROM users WHERE user_name=%s",(user_name))
          result = self.cursor.fetchone()
+         
          if len(result) >0:
-            return result['id']
+            #check hashed password
+            if result['password'] == bcrypt.hashpw(password, result['password']):
+               return result['id']
       
          return False
          
