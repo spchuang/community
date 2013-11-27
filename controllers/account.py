@@ -18,9 +18,10 @@ def login():
          
       #if user exists in db
       if id is not False:
-         login_user(Users().get_user(id))      
-         return redirect(url_for('community'))
-   	
+         login_user(Users().get_user(id))   
+         print request.args.get('next')   
+         return redirect(request.args.get('next') or url_for('community'))
+   
    return render_template('login.html')
    
 @login_required

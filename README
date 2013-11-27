@@ -21,3 +21,11 @@ http://stackoverflow.com/questions/13428708/best-way-to-make-flask-logins-login-
 http://stackoverflow.com/questions/13896650/how-to-make-a-python-decorator-function-in-flask-with-arguments-for-authorizati
 
 http://stackoverflow.com/questions/14335892/flask-login-mechanisim-to-authenticate-per-token-my-calls
+
+
+TODO list:
+1. finish signup form, use bycrpt
+2. admin page for users list
+3. create community (community table)
+4. join community (community-member table)
+5. notifications?
