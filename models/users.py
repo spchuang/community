@@ -17,21 +17,32 @@ class Users(Model):
          print repr(e)
          return False
       
-   def is_user(self, user_name, password):
+   def get_user_id(self, user_name, password):
       try:
-        self.cursor.execute("SELECT * FROM users WHERE user_name=%s AND password=%s",(user_name, passowrd))
-        result = self.cursor.fetchone()
-        
+         self.cursor.execute("SELECT id FROM users WHERE user_name=%s AND password=%s",(user_name, password))
+         result = self.cursor.fetchone()
+         if len(result) >0:
+            return result['id']
+      
+         return False
+         
       except Exception, e:
          print repr(e)
          return False
          
-   def get_user(self, uid):
+   
+        
+   #for flask-login
+   def get_user(self, id):
       try:
-         self.cursor.execute("SELECT * FROM users WHERE id=%s",(uid))
+          #get user info from db
+         self.cursor.execute("SELECT user_name FROM users WHERE id=%s",(id))
          result = self.cursor.fetchone()
-         u = User('test')
-         return u
+         
+         print result
+         if len(result) >0:
+            return User(result['user_name'], id)
+         return None
  
       except Exception, e:
          print repr(e)
@@ -46,13 +57,15 @@ class Users(Model):
       except Exception, e:
          print repr(e)
          return None
+
   
-class User(Model):
-   def __init__(self, nickname = None):
-      Model.__init__(self, db_name='community', name='users')
+class User():
+   def __init__(self, nickname, id):
       self.nickname = nickname
-      self.id       = 0 
-      
+      self.id       = id
+   
+         
+           
    #flask-login required user methods
    def __repr__(self):
       return '<User %r>' % (self.nickname)

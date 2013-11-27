@@ -14,7 +14,8 @@ CREATE TABLE users(
    gender     TINYINT(2)      NOT NULL,
    permission TINYINT(3)      NOT NULL DEFAULT 0,
    PRIMARY KEY (id),
-   Unique(email)
+   Unique(email),
+   Unique(user_name)
   /*
    TODO: add more fields for user profiles like about me, birthday, and other shit
   */

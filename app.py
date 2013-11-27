@@ -1,10 +1,10 @@
 # all the imports
-from models.users import Users
+from models.users import Users, User
 from controllers import account
 import os
 from flask import Flask, request, session, g, redirect, url_for, \
    abort, render_template, flash
-from flask.ext.login import LoginManager
+from flask.ext.login import LoginManager, login_required,current_user
 
 
 
@@ -23,6 +23,11 @@ app.config.from_object(__name__)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = 'account.login'
+
+@app.before_request
+def before_request():
+    g.user = current_user
 
 #Todo: model abstraction for database access s
 def connect_db():	
@@ -94,8 +99,7 @@ def signup():
 
 @login_manager.user_loader
 def load_user(id):
-   users = Users()
-   return users.get_user(int(id))
+   return Users().get_user(int(id))
 
 @app.route('/home')
 def home():
@@ -103,6 +107,7 @@ def home():
 
 	
 @app.route('/community')
+@login_required
 def community():
    return render_template('communiy_list.html')
  
