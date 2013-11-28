@@ -9,7 +9,7 @@ class Users(Model):
    
       try:
          #generate hashed password
-         u['password'] = bcrypt.hashpw(u['password'],bcrypt.gensalt())
+         #u['password'] = bcrypt.hashpw(u['password'],bcrypt.gensalt())
          self.cursor.execute("""INSERT INTO users \
                               (first_name,last_name,user_name,password,email,gender) \
                               VALUES \

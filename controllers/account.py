@@ -15,7 +15,7 @@ def signup():
          'last_name':   request.form['last_name'],
          'gender':      request.form['gender'],
          'email':       request.form['email'],
-         'password':    reeqest.form['password']
+         'password':    request.form['password']
       }
       users = Users()
       
