@@ -22,7 +22,6 @@ class Users(Model):
       
    def get_user_id(self, user_name, password):
       try:
-         
          self.cursor.execute("SELECT id,password FROM users WHERE user_name=%s",(user_name))
          result = self.cursor.fetchone()
          
@@ -37,8 +36,6 @@ class Users(Model):
          print repr(e)
          return False
          
-   
-        
    #for flask-login
    def get_user(self, id):
       try:

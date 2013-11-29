@@ -21,7 +21,7 @@ def signup():
       
       #upon successful signup, redirect to community
       if users.add_user(new_user):
-         return redirect(url_for('community'))
+         return redirect(url_for('login'))
       #Todo: Error handling
       
 

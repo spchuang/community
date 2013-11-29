@@ -1,6 +1,6 @@
 # all the imports
 from models.users import Users, User
-from controllers import account
+from controllers import account, community
 import os
 from flask import Flask, request, session, g, redirect, url_for, \
    abort, render_template, flash
@@ -106,16 +106,14 @@ def home():
    return render_template('home.html')
 
 	
-@app.route('/community')
-@login_required
-def community():
-   return render_template('communiy_list.html')
+
  
 #bind URL
 app.add_url_rule('/login',    methods=['GET', 'POST'],   view_func=account.login)
 app.add_url_rule('/logout',   methods=['GET'],           view_func=account.logout)
 app.add_url_rule('/signup',   methods=['GET', 'POST'],   view_func=account.signup)
 app.add_url_rule('/profile',  methods=['GET'],           view_func=account.profile)
+app.add_url_rule('/community',methods=['GET'],           view_func=community.community)
 
 
 #----------------------------------------
