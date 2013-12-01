@@ -1,4 +1,5 @@
 # all the imports
+import config
 from models.users import Users, User
 from controllers import account, community
 import os
@@ -12,11 +13,10 @@ from flask.ext.login import LoginManager, login_required,current_user
 #----------------------------------------
 # initialization
 #----------------------------------------
-DEBUG = True
-SECRET_KEY = 'development key'
+
 
 app = Flask(__name__)
-app.config.from_object(__name__)
+app.config.from_object('config')
 
 login_manager = LoginManager()
 login_manager.init_app(app)

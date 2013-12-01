@@ -26,7 +26,7 @@ CREATE TABLE communities(
    id          INTEGER(11)     NOT NULL AUTO_INCREMENT, 
    name        VARCHAR(50)     NOT NULL,
    description VARCHAR(300),           
-   is_public   TINYINT(2)      NOT NULL DEFAULT 0,
+   is_private  TINYINT(2)      NOT NULL DEFAULT 0,
    PRIMARY KEY (id)
 );
 

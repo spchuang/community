@@ -2,13 +2,16 @@ from models.users import User, Users
 from flask import Flask, request, session, g, redirect, url_for, \
    abort, render_template
 from flask.ext.login import login_user, login_required,logout_user
+from forms import LoginForm, SignupForm
+
    
 #https://flask-login.readthedocs.org/en/latest/
 
 def signup():
-   if request.method == 'POST':
+   form = SignupForm()
+   print dir(form)
+   if form.validate_on_submit():
       #Todo: form validation
-
       new_user = {
          'user_name':   request.form['user_name'],
          'first_name':  request.form['first_name'],
@@ -24,22 +27,22 @@ def signup():
          return redirect(url_for('login'))
       #Todo: Error handling
       
-
-   return render_template('signup.html')
+   print form
+   return render_template('signup.html', form=form)
    
 def login():
-   if request.method == 'POST':
+   form = LoginForm()
+   print dir(form.user_name)
+   if form.validate_on_submit():
       users = Users()
 
-      id = users.get_user_id(request.form['username'], request.form['password'])
-         
-      #if user exists in db
+      id = users.get_user_id(request.form['user_name'], request.form['password'])
       if id is not False:
          login_user(Users().get_user(id))   
          print request.args.get('next')   
          return redirect(request.args.get('next') or url_for('community'))
    
-   return render_template('login.html')
+   return render_template('login.html', form=form)
    
 @login_required
 def logout():

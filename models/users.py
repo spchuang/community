@@ -1,6 +1,14 @@
 from model import Model
 import bcrypt
 
+user_model = {
+   'table' : 'users',
+   'join_tables' : [],
+   'sort_order' :'DESC',
+   'fields' : ['first_name','last_name', 'user_name', 'password', 'email', 'gender'],
+   
+}
+
 class Users(Model):
    def __init__(self):
       Model.__init__(self, db_name='community', name='users')
@@ -67,15 +75,11 @@ class User():
    def __init__(self, nickname, id):
       self.nickname = nickname
       self.id       = id
-   
-         
            
    #flask-login required user methods
    def __repr__(self):
       return '<User %r>' % (self.nickname)
       
-   
-
    def is_authenticated(self):
       return True
    

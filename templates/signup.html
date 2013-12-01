@@ -1,6 +1,7 @@
-{% extends "layout.html" %}
-{% block body %}
 
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_input_field, render_radio_field %}
+{% block body %}
 
 <div class="container">
    
@@ -13,48 +14,43 @@
       <form action="{{ url_for('signup') }}" method='post' class="form-horizontal " role="form">
          <div class="form-group">
             <div class="col-xs-6 col-sm-6">
-               <input type="text" name='first_name' class="form-control" placeholder="First Name">
+               {{ render_input_field(form.user_name, "First Name") }}
             </div>
             <div class="col-xs-6 col-sm-6">
-               <input type="text" name='last_name' class="form-control" placeholder="Last Name">
+               {{ render_input_field(form.last_name, "Last Name") }}
             </div>
          </div>
          <div class="form-group">
             <div class="col-sm-12">
-               <input type="text" name='user_name' class="form-control" placeholder="username">
+               {{ render_input_field(form.user_name, "Username") }}
             </div>
          </div>
          <div class="form-group">
             <div class="col-sm-12">
-               <input type="email" name='email' class="form-control" placeholder="Your email">
+               {{ render_input_field(form.email, "Your email" , "email") }}
+
             </div>
          </div>
          <div class="form-group">
             <div class="col-sm-12">
-               <input type="email" name='reenter_email' class="form-control" placeholder="Re-enter email">
+               {{ render_input_field(form.password, "Password", "password") }}
             </div>
          </div>
          
          <div class="form-group">
             <div class="col-sm-12">
-               <input type="password" name='password' class="form-control" placeholder="New Password">
+               {{ render_input_field(form.confirm, "Re-enter password", "password") }}
             </div>
          </div>
          <div class="form-group">
             <div class="col-sm-3">
-               <label>
-                  <input type="radio" name="gender" value="0">
-                  Female
-               </label>
+               {{ render_radio_field(form.gender, "Female", "0") }}
+      
             </div>
             <div class="col-sm-3">
-               <label>
-                  <input type="radio" name="gender" value="1">
-                  Male
-               </label>
+               {{ render_radio_field(form.gender, "Male", "1") }}
             </div>
          </div>
-         
          <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
       </form>
       <hr>

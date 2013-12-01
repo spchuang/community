@@ -1,14 +1,17 @@
-{% extends "layout.html" %}
+{% extends "base.html" %}
 {% block body %}
+{% from "_formhelpers.html" import render_input_field, render_radio_field %}
 
 <div class="container">
 
    <form action="{{ url_for('login') }}"  method=post class="form-signin">
+      {{form.hidden_tag()}}
       <h2 class="form-signin-heading">Please sign in</h2>
-      <input type="text" class="form-control" name="username" placeholder="username/email" required autofocus>
-      <input type="password" name="password" class="form-control" placeholder="Password" required>
+      {{ render_input_field(form.user_name, "User name") }}
+      {{ render_input_field(form.password, "Password") }}
+      
       <label class="checkbox">
-      <input type="checkbox" value="remember-me"> Remember me
+      <input id="remember_me" name="remember_me" type="checkbox" value="y">Remember me
       </label>
       
       <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>

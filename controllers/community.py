@@ -6,4 +6,6 @@ from flask.ext.login import login_user, login_required,logout_user
 
 @login_required
 def community():
+   c = Communities()
+   
    return render_template('communiy_list.html')
