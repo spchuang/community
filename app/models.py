@@ -12,6 +12,7 @@ user_community = db.Table('user_community',
 )
 
 class User(db.Model):
+   __tablename__ = "user"
    id            = db.Column(db.Integer, primary_key = True)
    first_name    = db.Column(db.String(30), nullable=False)
    last_name     = db.Column(db.String(30), nullable=False)
@@ -22,7 +23,7 @@ class User(db.Model):
    permission    = db.Column(db.SmallInteger, nullable=False, default=USER)
    joined_communities = db.relationship('Community',
         secondary = user_community,
-        primaryjoin = "user_community.c.user_id == user.id",
+        primaryjoin = "user_community.c.user_id == User.id",
         secondaryjoin = "user_community.c.community_id == Community.id",
         backref = db.backref('members', lazy = 'dynamic'),
         lazy = 'dynamic')
@@ -42,8 +43,10 @@ class User(db.Model):
    def get_id(self):
       return unicode(self.id)
 
+
    def is_member(self, community):
-      return self.joined_communities.filter(user_community.c.community_id == community.id).count() > 0
+      #return self.joined_communities.filter(user_community.c.community_id == community.id).count() > 0
+      return False
 
    def join(self, community):
       if not self.is_member(community):
@@ -57,16 +60,12 @@ class User(db.Model):
 
 
 class Community(db.Model):
+   __tablename__ = "community"
    id            = db.Column(db.Integer, primary_key = True)
    name          = db.Column(db.String(60), nullable=False)
    description   = db.Column(db.String(300))
    is_private    = db.Column(db.SmallInteger, nullable=False, default = NO)
-   members = db.relationship('User',
-        secondary = user_community,
-        primaryjoin = "user_community.c.community_id == Community.id",
-        secondaryjoin = "user_community.c.user_id == user.id",
-        backref = db.backref('joined_communities', lazy = 'dynamic'),
-        lazy = 'dynamic')
+
 
    def __repr__(self):
       return '<Community %r: %r>' % (self.id, self.name)

@@ -2,11 +2,12 @@
 from flask import session, g, redirect, url_for, render_template
 from flask.ext.login import login_user, login_required,logout_user
 from app.forms import CreateCommunityForm
-
+from app.models import Community
 
 @login_required
 def community():
    form = CreateCommunityForm()
+   c = Community(name='test')
    #c = Community()
    #communities = c.get_user_communities(g.user.get_id())
 #   communities = [
