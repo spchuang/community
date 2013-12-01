@@ -1,6 +1,67 @@
 {% extends "base.html" %}
 {% block body %}
+{% from "_formhelpers.html" import render_input_field%}
 
-<h1>This should be a list of communities</h1>
+<div class="container">
+
+   <div class="col-md-3">
+      <h4>Public Communities</h4>
+      <h4>My Communities</h4>
+   </div>
+   
+   <div id="right_col" class="col-md-9">
+      <div class="row">
+         My Communities
+         <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createCommunityModal">Create Community</button>
+      </div>
+      
+      <div class="row">
+      {% if communities %}
+      <ul class="community_items">
+         {% for c in communities %}
+         <li id="community_{{c.id}}">
+            {{ c.name }}
+         </li>
+         {% endfor %}
+      </ul>
+      {% else %}
+         <h3>You don't belong to any groups! Join or create one :)</h3>
+      {% endif %}
+      </div>
+   </div>
+
+
+</div>
+
+<div class="modal fade" id="createCommunityModal" tabindex="-1" role="dialog" aria-labelledby="createCommunityModal" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">Create New Community</h4>
+         </div>
+         <div class="modal-body">
+            <form action="{{ url_for('create_community') }}"  method=post>
+               <div class="form-group">
+                  <label>Name</label>
+                   {{ render_input_field(form.name, "Group name") }}
+               </div>
+               <div class="form-group">
+                  <label>Name</label>
+                  {{ render_input_field(form.description, "Group Description") }}
+               </div>
+
+            </form>
+            
+            
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Create</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+         </div>
+      </div><!-- /.modal-content -->
+   </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 
 {% endblock %}

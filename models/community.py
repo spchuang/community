@@ -1,7 +1,7 @@
 from model import Model
 
 
-class Communities(Model):
+class Community(Model):
    def __init__(self):
       Model.__init__(self, db_name='community', name='communities')
    
@@ -19,7 +19,7 @@ class Communities(Model):
          
    def get_user_communities(self, user_id):
       try:
-         self.cursor.execute("""SELECT name, description FROM communities \
+         self.cursor.execute("""SELECT id, name, description FROM communities \
                                  JOIN user_in_community \
                                  WHERE communities.id = user_in_community.community_id AND user_id=%s""", (user_id))
          result = self.cursor.fetchall()
@@ -30,7 +30,7 @@ class Communities(Model):
    
    def get_public_communities(self):
       try:
-         self.cursor.execute("""SELECT name, description FROM communities WHERE is_private=0""", )
+         self.cursor.execute("""SELECT id, name, description FROM communities WHERE is_private=0""", )
          result = self.cursor.fetchall()
          return result
       except Exception, e:

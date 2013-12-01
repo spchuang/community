@@ -20,3 +20,6 @@ class SignupForm(Form):
    confirm     = PasswordField('Repeat Password')
    
 
+class CreateCommunityForm(Form):
+   name         = TextField('name',          [validators.Required()])
+   description  = TextField('description',   [validators.Required()])

@@ -31,6 +31,9 @@ def signup():
    return render_template('signup.html', form=form)
    
 def login():
+   #if user is already logged in, take him somewhere else
+   if g.user.is_authenticated():
+      return redirect(url_for('community'))
    form = LoginForm()
    print dir(form.user_name)
    if form.validate_on_submit():
