@@ -1,11 +1,11 @@
 # all the imports
 import config
-from models.user import Users, User
 from controllers import user, community
 from flask import request, session, g, redirect, url_for, \
    abort, render_template, flash
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, login_manager, db
+from models import User
 
 @app.before_request
 def before_request():
@@ -16,10 +16,10 @@ def before_request():
 def page_not_found(e):
     return render_template('404.html'), 404
 	
+
 @login_manager.user_loader
 def load_user(id):
-   return Users().get_user(int(id))
-   
+   return User.query.get(int(id))
    
 #----------------------------------------
 # controllers
