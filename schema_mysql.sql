@@ -35,7 +35,5 @@ CREATE TABLE user_in_community(
    user_id        INTEGER(11)     NOT NULL,
    community_id  INTEGER(11)     NOT NULL,
    PRIMARY KEY (id),
-   Unique(user_id, community_id),
-   FOREIGN KEY (user_id) REFERENCES users(id),
-   FOREIGN KEY (community_id) REFERENCES communities(id)
+   Unique(user_id, community_id)
 );

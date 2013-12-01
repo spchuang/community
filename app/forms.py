@@ -22,4 +22,4 @@ class SignupForm(Form):
 
 class CreateCommunityForm(Form):
    name         = TextField('name',          [validators.Required()])
-   description  = TextField('description',   [validators.Required()])
+   description  = TextField('description')

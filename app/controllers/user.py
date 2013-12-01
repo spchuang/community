@@ -1,5 +1,5 @@
 from app.forms import LoginForm, SignupForm
-from flask import session, g, redirect, url_for, render_template
+from flask import session, g, redirect, url_for, render_template, request
 from flask.ext.login import login_user, login_required,logout_user
 import bcrypt
 from app.models import User
@@ -12,13 +12,13 @@ def signup():
    if form.validate_on_submit():
       hashed_password = bcrypt.hashpw(form.password.data,bcrypt.gensalt())
 
-      user = User(user_name   = form.user_name.data,
+      new_user = User(user_name   = form.user_name.data,
                   first_name  = form.first_name.data,
                   last_name   = form.last_name.data,
                   gender      = form.gender.data,
                   email       = form.email.data,
                   password    = hashed_password)
-      db.session.add(user)
+      db.session.add(new_user)
       db.session.commit()
       return redirect(url_for('login'))
    return render_template('signup.html', form=form)

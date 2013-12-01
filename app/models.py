@@ -63,7 +63,7 @@ class Community(db.Model):
    __tablename__ = "community"
    id            = db.Column(db.Integer, primary_key = True)
    name          = db.Column(db.String(60), nullable=False)
-   description   = db.Column(db.String(300))
+   description   = db.Column(db.Text)
    is_private    = db.Column(db.SmallInteger, nullable=False, default = NO)
 
 

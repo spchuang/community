@@ -5,17 +5,24 @@
 <div class="container">
 
    <div class="col-md-3">
-      <h4>Public Communities</h4>
-      <h4>My Communities</h4>
+      <h4><a href="{{url_for('community', get='public')}}">Public Communities</a></h4>
+      <h4><a href="{{url_for('community', get=g.user.user_name)}}">My Communities</a></h4>
    </div>
    
    <div id="right_col" class="col-md-9">
       <div class="row">
-         My Communities
+         {% if type == g.user.user_name %}
+            My Community
+         {% elif type == 'public' %}
+            Public Community
+         {% else %}
+            Someone else's community?
+         {% endif %}
          <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createCommunityModal">Create Community</button>
       </div>
       
-      <div class="row">
+      <div class="row" id="community_content">
+          <!--
       {% if communities %}
       <ul class="community_items">
          {% for c in communities %}
@@ -28,6 +35,7 @@
          <h3>You don't belong to any groups! Join or create one :)</h3>
       {% endif %}
       </div>
+      !-->
    </div>
 
 
@@ -41,27 +49,85 @@
             <h4 class="modal-title" id="myModalLabel">Create New Community</h4>
          </div>
          <div class="modal-body">
-            <form action="{{ url_for('create_community') }}"  method=post>
+            <form id="create_form" action="{{ url_for('create_community') }}"  method=post>
+               {{ form.csrf_token }}
                <div class="form-group">
                   <label>Name</label>
                    {{ render_input_field(form.name, "Group name") }}
                </div>
                <div class="form-group">
-                  <label>Name</label>
+                  <label>description</label>
                   {{ render_input_field(form.description, "Group Description") }}
                </div>
-
             </form>
-            
-            
          </div>
          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" type="submit">Create</button>
+            <button id="create_community" type="button" class="btn btn-primary" type="submit">Create</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
          </div>
       </div><!-- /.modal-content -->
    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<script type=text/javascript>
 
+USER_NAME = '{{type}}';
+
+function refresh_community_list(){
+   $.get('{{url_for('community_list')}}?get='+USER_NAME)
+      .done(function(data){
+         var content = $("#community_content");
+         content.empty();
+         if(data.data.length == 0){
+            content.append(" <h3>You don't belong to any groups! Join or create one :)</h3>");
+            return false;
+         }
+         var list = $('<ul class="community_items"></ul>');
+
+         $.each(data.data, function(key, c){
+            list.append('<li id="community_'+c.id+'">' + c.name+'</li>');
+         });
+         content.append(list);
+      });
+}
+$( document ).ready(function() {
+   refresh_community_list();
+
+   $("#create_community").click(function(){
+      var form = $("#create_form");
+      var data = form.serialize();
+      $.ajax({
+         type: form.attr('method'),
+         url: form.attr('action'),
+         data: data,
+      }).done(function(data){
+         //remove errors
+         form.find(".form_field").each(function(){
+            $(this).removeClass('has-error');
+            $(this).find('ul.error_message').empty();
+         });
+
+         if(data.success){
+            $('#createCommunityModal').modal('hide');
+            //refresh community list
+            refresh_community_list();
+         }else{
+            //raise error
+            $.each(data.errors, function(field, errors){
+               var error_field = $("#"+field);
+               error_field.addClass('has-error');
+               $.each(errors, function(key, e){
+                  error_field.find('ul.error_message').append("<li>"+e+"</li>");
+               });
+            });
+         }
+      }).fail(function(error){
+         console.log(error);
+      });
+   });
+
+
+});
+
+</script>
 {% endblock %}

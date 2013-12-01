@@ -2,7 +2,7 @@
 
 {% macro render_input_field(field, field_name, field_type) %}
 
-<div  {{'class=has-error' if field.errors else ''}} >
+<div  id="{{field.name}}" class="form_field {{'has-error' if field.errors else ''}}" >
 
    {% if field_type %}
       <input type="{{field_type}}" name='{{field.name}}' value="{{field.data  or ''}}" class="form-control" placeholder="{{field_name}}">
@@ -10,13 +10,13 @@
       <input type="text" name='{{field.name}}'  value="{{field.data  or ''}}"  class="form-control" placeholder="{{field_name}}">
    {% endif %}
 
+   <ul style="list-style: none" class="control-label error_message">
    {% if field.errors %}
-      <ul style="list-style: none" class="control-label">
       {% for error in field.errors %}
          <li>{{ error }}</li>
       {% endfor %}
-      </ul>
    {% endif %}
+   </ul>
   
 </div>
  
