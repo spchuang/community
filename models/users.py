@@ -24,6 +24,7 @@ class Users(Model):
                               (%s,%s,%s,%s,%s,%s)""", 
                               (u['first_name'],u['last_name'], u['user_name'],u['password'],u['email'],u['gender']))
          self.conn.commit()
+         return True
       except Exception, e:
          print repr(e)
          return False

@@ -9,25 +9,25 @@ from forms import LoginForm, SignupForm
 
 def signup():
    form = SignupForm()
-   print dir(form)
    if form.validate_on_submit():
       #Todo: form validation
+      print form.password.data
+      print form.gender.data
       new_user = {
-         'user_name':   request.form['user_name'],
-         'first_name':  request.form['first_name'],
-         'last_name':   request.form['last_name'],
-         'gender':      request.form['gender'],
-         'email':       request.form['email'],
-         'password':    request.form['password']
+         'user_name':   form.user_name.data,
+         'first_name':  form.first_name.data,
+         'last_name':   form.last_name.data,
+         'gender':      form.gender.data,
+         'email':       form.email.data,
+         'password':    form.password.data
       }
       users = Users()
       
       #upon successful signup, redirect to community
       if users.add_user(new_user):
          return redirect(url_for('login'))
-      #Todo: Error handling
       
-   print form
+   print form.errors
    return render_template('signup.html', form=form)
    
 def login():
@@ -35,11 +35,9 @@ def login():
    print dir(form.user_name)
    if form.validate_on_submit():
       users = Users()
-
       id = users.get_user_id(request.form['user_name'], request.form['password'])
       if id is not False:
          login_user(Users().get_user(id))   
-         print request.args.get('next')   
          return redirect(request.args.get('next') or url_for('community'))
    
    return render_template('login.html', form=form)

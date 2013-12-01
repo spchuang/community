@@ -1,24 +1,22 @@
 
 
 {% macro render_input_field(field, field_name, field_type) %}
-{% if field.errors %}
-<div class="has-error">
-{% else %}
-<div>
-{% endif %}
+
+<div  {{'class=has-error' if field.errors else ''}} >
+
    {% if field_type %}
-      <input type="{{field_type}}" name='{{field.name}}' value="{{field.data}}" class="form-control" placeholder="{{field_name}}">
+      <input type="{{field_type}}" name='{{field.name}}' value="{{field.data  or ''}}" class="form-control" placeholder="{{field_name}}">
    {% else %}
-      <input type="text" name='{{field.name}}'  value="{{field.data}}"  class="form-control" placeholder="{{field_name}}">
+      <input type="text" name='{{field.name}}'  value="{{field.data  or ''}}"  class="form-control" placeholder="{{field_name}}">
    {% endif %}
 
    {% if field.errors %}
-    <ul style="color: red;"class=errors>
-    {% for error in field.errors %}
-      <li>{{ error }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
+      <ul style="list-style: none" class="control-label">
+      {% for error in field.errors %}
+         <li>{{ error }}</li>
+      {% endfor %}
+      </ul>
+   {% endif %}
   
 </div>
  
@@ -31,5 +29,6 @@
       <input type="radio" name="{{field.name}}" value="{{value}}">
       {{field_name}}
    </label>
+
 {% endmacro %}
 
