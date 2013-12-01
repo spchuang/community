@@ -16,6 +16,10 @@ def before_request():
 def page_not_found(e):
     return render_template('404.html'), 404
 	
+@app.errorhandler(500)
+def internal_error(error):
+   db.session.rollback()
+   return render_template('404.html'), 500
 
 @login_manager.user_loader
 def load_user(id):
