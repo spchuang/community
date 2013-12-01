@@ -1,4 +1,4 @@
-from model import Model
+from app.models.model import Model
 
 
 class Community(Model):

@@ -1,4 +1,4 @@
-from model import Model
+from app.models.model import Model
 import bcrypt
 
 user_model = {

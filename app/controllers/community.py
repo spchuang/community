@@ -1,9 +1,10 @@
-from models.users import User, Users
-from models.community import Community
+from app.models.user import User, Users
+from app.models.community import Community
 from flask import Flask, request, session, g, redirect, url_for, \
    abort, render_template
 from flask.ext.login import login_user, login_required,logout_user
-from forms import CreateCommunityForm
+from app.forms import CreateCommunityForm
+
 
 @login_required
 def community():
@@ -20,4 +21,9 @@ def community():
  
 @login_required  
 def create_community():
-   print "OK"
+   form = CreateCommunityForm()
+   if form.validate_on_submit():
+      return jsonify(error="false")
+      #create community
+   
+   return jsonify(error="true")

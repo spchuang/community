@@ -1,8 +1,9 @@
-from models.users import User, Users
+from app.forms import LoginForm, SignupForm
+from app.models.user import User, Users
 from flask import Flask, request, session, g, redirect, url_for, \
    abort, render_template
 from flask.ext.login import login_user, login_required,logout_user
-from forms import LoginForm, SignupForm
+
 
    
 #https://flask-login.readthedocs.org/en/latest/

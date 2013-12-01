@@ -1,4 +1,4 @@
-from db_util import DB
+from app.db_util import DB
 
 class Model: 
    def __init__(self, db_name=None, name=None):
