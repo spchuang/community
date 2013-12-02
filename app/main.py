@@ -45,7 +45,7 @@ app.add_url_rule('/list/community'     ,methods=['GET'],      view_func=communit
 
 app.add_url_rule('/community' ,methods=['GET'],      view_func=community.community)
 
-app.add_url_rule('/api/create_community', methods=['POST'],    view_func=community.create_community)
-app.add_url_rule('/api/join_community' ,  methods=['POST'],    view_func=community.join_community)
-app.add_url_rule('/api/community_list',   methods=['GET'],     view_func=community.community_list)
-
+app.add_url_rule('/api/communities/create', methods=['POST'],    view_func=community.create_community)
+app.add_url_rule('/api/communities/join' ,  methods=['POST'],    view_func=community.join_community)
+app.add_url_rule('/api/communities',   methods=['GET'],     view_func=community.community_list)
+app.add_url_rule('/api/community/create_post',  methods=['POST'],     view_func=community.create_post)

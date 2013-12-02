@@ -1,20 +1,59 @@
 from flask import jsonify,session, g, redirect, url_for, render_template, request, abort
 from flask.ext.login import login_user, login_required,logout_user
-from app.forms import CreateCommunityForm
-from app.models import Community, User, get_community_list
+from app.forms import CreateCommunityForm,CreateWallPostForm
+from app.models import Community, User, Wall,Post, get_community_list, get_wall_posts
 from app import db
 
 @login_required
 def community():
-   type = request.args.get('id') or abort(404)
-   return render_template('community.html')
+   c_id = request.args.get('id') or abort(404)
+   w_id = request.args.get('wall') or 'default'
+   c = Community().query.filter_by(id=c_id).first()
+   c.num_members = c.members.count()
+   w = c.walls.all()
+   p = get_wall_posts(c,w[0]).all()
+
+   postForm = CreateWallPostForm()
+   return render_template('community.html', community=c, walls=w, posts=p, postForm=postForm)
 
 @login_required
 def communities():
    form = CreateCommunityForm()
    type = request.args.get('get') or 'public'
-
    return render_template('communiy_list.html', communities={}, form=form, type=type)
+
+@login_required
+def create_post():
+   c_id = request.args.get('id')
+   if c_id is None:
+      return jsonify(success = False, errors = "What community?")
+   w_id = request.args.get('wall')
+   if w_id is None:
+      return jsonify(success = False, errors = "What wall?")
+   postForm = CreateWallPostForm()
+   if postForm.validate_on_submit():
+      print request.form
+
+      w = Wall().query.filter(Wall.id==w_id).first()
+      new_post = Post(body = postForm.body.data, user_id=g.user.id)
+      w.create(new_post)
+      db.session.add(w)
+      db.session.commit()
+
+
+
+      '''
+      new_community = Community(name   = form.name.data,
+                                description  = form.description.data)
+      db.session.add(new_community)
+      db.session.commit()
+      g.user.join(new_community)
+      db.session.add(g.user)
+      db.session.commit()
+      '''
+      return jsonify(success = True)
+
+   return jsonify(success = False, errors = postForm.errors)
 
 @login_required
 def community_list():

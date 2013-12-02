@@ -2,6 +2,100 @@
 {% block body %}
 {% from "_formhelpers.html" import render_input_field%}
 
-        <h1>THIS IS A COMMUNITY PAGE</h1>
+<div class="container">
 
+   <div class="jumbotron" style="padding:10px;">
+      <h2>{{community.name}} ({{community.num_members}} members)</h2>
+      <p class="lead">{{community.description}}</p>
+   </div>
+
+   <div class="row">
+
+      <div class="col-md-4">
+         <p><b>Walls</b></p>
+         <hr>
+         {% if walls|length > 0  %}
+            <ul>
+            {% for w in walls %}
+               <li>{{ w.name }}</li>
+               {% endfor %}
+            </ul>
+         {% else %}
+            <p>Bro, you don't even have a wall</p>
+         {% endif %}
+
+      </div>
+      <div class="col-md-8">
+         <div class="col-md-9" id="wall">
+            <div ">
+               <form id="create_form" action="{{ url_for('create_post', id=community.id, wall=walls[0].id) }}"  method=post>
+               {{ postForm.csrf_token }}
+               {{ render_input_field(postForm.body, "What's up") }}
+               <button id="create_post" class="btn btn-primary" type="button">Post</button>
+               </form>
+               <hr>
+            </div>
+
+            {% for p in posts %}
+            <div id="wall_content">
+               <div class="post well well-sm">
+                  <div class="post_head">
+                     <div class="user_avatar pull-left" ></div>
+                     <div class="user_meta pull-right" >
+                        <div class="user_name">{{p.first_name | capitalize}} {{p.last_name|capitalize}}</div>
+                        <div class="post_time">{{p.Post.created}}</div>
+                     </div>
+                  </div>
+                  <div class="post_body">
+                     {{p.Post.body}}
+                  </div>
+                  <div class="post_action">
+                     Like . Comment . Share
+                  </div>
+
+                  <div class="post_comments">
+                     This is for comments (TODO)
+                  </div>
+
+               </div>
+            </div>
+            {% endfor %}
+         </div>
+
+
+      </div>
+   </div>
+
+</div>
+
+<script type=text/javascript>
+
+USER_NAME = '{{type}}';
+BASE_COMMUNITY_URL = '{{url_for('community')}}';
+
+
+$( document ).ready(function() {
+   $("#create_post").click(function(){
+      var form = $("#create_form");
+      var data = form.serialize();
+      $.ajax({
+         type: form.attr('method'),
+         url: form.attr('action'),
+         data: data,
+      }).done(function(data){
+         console.log(data);
+         if(data.success){
+            location.reload();
+         }else{
+            alert("Something went wrong");
+         }
+      }).fail(function(error){
+         console.log(error);
+      });
+   });
+
+
+});
+
+</script>
 {% endblock %}

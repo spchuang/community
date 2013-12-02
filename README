@@ -47,3 +47,13 @@ community/
 
 TODO list:
 See github issues
+
+
+Possibly useful resources
+Text length contraints
+http://stackoverflow.com/questions/11735947/what-is-maximum-message-length-for-facebook-wall-post-closed
+db design
+http://stackoverflow.com/questions/4048151/what-are-the-options-for-storing-hierarchical-data-in-a-relational-database
+
+Question:
+1. initie comments? self-referencial table or only one layer of comments

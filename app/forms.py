@@ -23,3 +23,6 @@ class SignupForm(Form):
 class CreateCommunityForm(Form):
    name         = TextField('name',          [validators.Required()])
    description  = TextField('description')
+
+class CreateWallPostForm(Form):
+   body   = TextField('body',  [validators.Required(),validators.Length(max=1000)])
