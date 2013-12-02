@@ -41,10 +41,11 @@ app.add_url_rule('/login',    methods=['GET', 'POST'],   view_func=user.login)
 app.add_url_rule('/logout',   methods=['GET'],           view_func=user.logout)
 app.add_url_rule('/signup',   methods=['GET', 'POST'],   view_func=user.signup)
 app.add_url_rule('/profile',  methods=['GET'],           view_func=user.profile)
-app.add_url_rule('/community',methods=['GET'],           view_func=community.community)
+app.add_url_rule('/list/community'     ,methods=['GET'],      view_func=community.communities)
 
-app.add_url_rule('/api/create_community',methods=['POST'],   view_func=community.create_community)
-app.add_url_rule('/api/join_community' ,  methods=['POST'],  view_func=community.join_community)
+app.add_url_rule('/community' ,methods=['GET'],      view_func=community.community)
 
-app.add_url_rule('/api/community_list', methods=['GET'], view_func=community.community_list)
+app.add_url_rule('/api/create_community', methods=['POST'],    view_func=community.create_community)
+app.add_url_rule('/api/join_community' ,  methods=['POST'],    view_func=community.join_community)
+app.add_url_rule('/api/community_list',   methods=['GET'],     view_func=community.community_list)
 

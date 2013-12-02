@@ -1,4 +1,4 @@
-from flask import jsonify,session, g, redirect, url_for, render_template, request
+from flask import jsonify,session, g, redirect, url_for, render_template, request, abort
 from flask.ext.login import login_user, login_required,logout_user
 from app.forms import CreateCommunityForm
 from app.models import Community, User, get_community_list
@@ -6,17 +6,20 @@ from app import db
 
 @login_required
 def community():
+   type = request.args.get('id') or abort(404)
+   return render_template('community.html')
+
+@login_required
+def communities():
    form = CreateCommunityForm()
-   type = request.args['get']
+   type = request.args.get('get') or 'public'
 
    return render_template('communiy_list.html', communities={}, form=form, type=type)
 
 @login_required
 def community_list():
-
-   #get public, current user, or other user
    #TODO: show status of user to community (joined? join?)
-   type = request.args['get']
+   type = request.args.get('get') or 'public'
    if type == 'public':
       com = get_community_list(g.user).filter(Community.is_private ==0).all()
    elif type == g.user.user_name:
@@ -29,7 +32,6 @@ def community_list():
          com = get_community_list(user, is_user_filter=True).filter(Community.is_private ==0).all()
       else:
          return jsonify(success=False, error="user not found")
-
 
    return jsonify(success = True, data= [
                {'id':c.Community.id, 'name': c.Community.name, 'num_members': c.num_members, 'is_member': c.is_member}

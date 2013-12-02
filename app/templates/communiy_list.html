@@ -5,8 +5,8 @@
 <div class="container">
 
    <div class="col-md-3">
-      <h4><a href="{{url_for('community', get='public')}}">Public Communities</a></h4>
-      <h4><a href="{{url_for('community', get=g.user.user_name)}}">My Communities</a></h4>
+      <h4><a href="{{url_for('communities', get='public')}}">Public Communities</a></h4>
+      <h4><a href="{{url_for('communities', get=g.user.user_name)}}">My Communities</a></h4>
    </div>
    
    <div id="right_col" class="col-md-9">
@@ -72,6 +72,7 @@
 <script type=text/javascript>
 
 USER_NAME = '{{type}}';
+BASE_COMMUNITY_URL = '{{url_for('community')}}';
 
 function refresh_community_list(){
    $.get('{{url_for('community_list')}}?get='+USER_NAME)
@@ -86,11 +87,11 @@ function refresh_community_list(){
 
          $.each(data.data, function(key, c){
             var c_string = '<li id="community_'+c.id+'">'
-                         + c.name+ ' ('+c.num_members+')';
+                         + '<a href="' +BASE_COMMUNITY_URL+'?id='+c.id+'">'
+                         + c.name+ ' </a>('+c.num_members+')';
             if(!c.is_member){
-
+               c_string += '<button class="join_community btn btn-info pull-right" >Join</button>';
             }
-            c_string += '<button class="join_community btn btn-info pull-right" >Join</button>';
             c_string +=' </li>';
             list.append(c_string);
          });
@@ -107,7 +108,11 @@ function join_community(id){
       url: '{{url_for('join_community')}}',
       data: {id: id},
    }).done(function(data){
-      console.log(data);
+      if(data.success){
+         refresh_community_list();
+      }else{
+         alert(data.errors);
+      }
    });
 
 }

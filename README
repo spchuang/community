@@ -1,31 +1,49 @@
-Online Mysql DB:
-Host: sql3.freesqldatabase.com
-Database name: sql322886
-Database user: sql322886
-Database password: wD5*sF5%
-Port number: 3306
+The free mysql db we're using for now:
+   Online Mysql DB:
+   Host: sql3.freesqldatabase.com
+   Database name: sql322886
+   Database user: sql322886
+   Database password: wD5*sF5%
+   Port number: 3306
 
+Install python dependencies:
+sudo pip install -r requirement.txt
 
-Right now, I'm just gonna wokr with sqlite3 in a local db file.
+Create the databases:
+python db_create.py
 
-fb authentication: http://pythonhosted.org/Flask-Social/
+start the server:
+python run.py
 
-The backend is structured in: Flask + Jinja2
+Top-level structure:
+community/
+   app/
+      controllers/ :controllers are pretty much functions separated out from main for sake of readability
+         community.py : community list, community api,
+         user.py      : User related stuff; like logins, logout, profile page, signup
+      static/
+         css/
+         img/
+         js/
+      templates/
+         _formhelpers.html : defines some jinja2 macro
+         404.html          : 404 page
+         base.html         : the base template (defines javascript files and navigation header)
+         (rest)            : jinja2 template files
 
-frontend: RequireJS + JQuery + backboneJS(include underscore.js)
+      __init__.py : initializaiton of the app (ex. for sqlachemy and flask-login)
+      forms.py    : definition of Flask-WTF forms
+      main.py     : main entry point of the app; defines routing
+      models.py   : sql-alchemy model definition
 
-
-
-Login:
-http://stackoverflow.com/questions/13428708/best-way-to-make-flask-logins-login-required-the-default
-http://stackoverflow.com/questions/13896650/how-to-make-a-python-decorator-function-in-flask-with-arguments-for-authorizati
-
-http://stackoverflow.com/questions/14335892/flask-login-mechanisim-to-authenticate-per-token-my-calls
+   db_create.py : Script for creating the database
+   config.py    : Application configuration
+   run.py       : start the application
+   try.py       : just for testing out sqlalchemy quries
+   test.py      : Unit tester (undone)
+   schema_mysql.sql: the mysql definition of table schema (we can probably remove it later since we are using sqlalchemy now)
+   requirements.txt: python dependency list
 
 
 TODO list:
-1. finish signup form, use bycrpt
-2. admin page for users list
-3. create community (community table)
-4. join community (community-member table)
-5. notifications?
+See github issues
