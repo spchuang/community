@@ -85,12 +85,39 @@ function refresh_community_list(){
          var list = $('<ul class="community_items"></ul>');
 
          $.each(data.data, function(key, c){
-            list.append('<li id="community_'+c.id+'">' + c.name+'</li>');
+            var c_string = '<li id="community_'+c.id+'">'
+                         + c.name+ ' ('+c.num_members+')';
+            if(!c.is_member){
+
+            }
+            c_string += '<button class="join_community btn btn-info pull-right" >Join</button>';
+            c_string +=' </li>';
+            list.append(c_string);
          });
+
+
+
          content.append(list);
       });
 }
+
+function join_community(id){
+   $.ajax({
+      type: 'POST',
+      url: '{{url_for('join_community')}}',
+      data: {id: id},
+   }).done(function(data){
+      console.log(data);
+   });
+
+}
+
 $( document ).ready(function() {
+   $(document).on('click','.join_community', function(){
+      var id = $(this).parent().attr('id').split("_")[1];
+      join_community(id);
+   });
+
    refresh_community_list();
 
    $("#create_community").click(function(){

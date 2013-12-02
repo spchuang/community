@@ -44,19 +44,7 @@ app.add_url_rule('/profile',  methods=['GET'],           view_func=user.profile)
 app.add_url_rule('/community',methods=['GET'],           view_func=community.community)
 
 app.add_url_rule('/api/create_community',methods=['POST'],   view_func=community.create_community)
+app.add_url_rule('/api/join_community' ,  methods=['POST'],  view_func=community.join_community)
 
 app.add_url_rule('/api/community_list', methods=['GET'], view_func=community.community_list)
 
-
-#----------------------------------------
-# launch
-#----------------------------------------   
-'''
-if __name__ == '__main__':
-   #u = Users()
-   #u.add_user()
-   #users = u.get_users()
-   #print users
-   port = int(os.environ.get("PORT", 5000))
-   app.run(host='0.0.0.0', port=port)
-'''
