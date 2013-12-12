@@ -26,7 +26,7 @@ def signup():
 def login():
    #if user is already logged in, take him somewhere else
    if g.user is not None and g.user.is_authenticated():
-      return redirect(url_for('community'))
+      return redirect(url_for('communities'))
          
    form = LoginForm()
    if form.validate_on_submit():
@@ -34,7 +34,7 @@ def login():
       user = User.query.filter_by(user_name = form.user_name.data).first()
       if user is not None and user.password == bcrypt.hashpw(form.password.data, user.password):
          login_user(user, remember = form.remember_me.data)   
-         return redirect(request.args.get('next') or url_for('community'))
+         return redirect(request.args.get('next') or url_for('communities'))
    
    return render_template('login.html', form=form)
    
