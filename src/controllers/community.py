@@ -1,20 +1,20 @@
 from flask import jsonify,session, g, redirect, url_for, render_template, request, abort
 from flask.ext.login import login_user, login_required,logout_user
 from src.forms import CreateCommunityForm,CreateWallPostForm, WallPostCommentForm
-from db.models import Community, User, Wall,Post, get_community_list, get_wall_posts
+from db.models import Community, User,Post, get_community_list, get_wall_posts
 from src import db
 
 @login_required
 def community():
-   c_id = request.args.get('id') or abort(404)
-   w_id = request.args.get('wall') or 'default'
+   c_id = request.args.get('c_id') or abort(404)
    c = Community().query.filter_by(id=c_id).first()
    c.num_members = c.members.count()
-   w = c.walls.all()
-   p = get_wall_posts(c,w[0]).all()
+   p = get_wall_posts(c).all()
 
+   print p
    postForm = CreateWallPostForm()
-   return render_template('community.html', community=c, walls=w, posts=p, postForm=postForm)
+   commentForm = WallPostCommentForm()
+   return render_template('community.html', community=c, posts=p, postForm=postForm, commentForm=commentForm)
 
 @login_required
 def communities():
@@ -24,18 +24,16 @@ def communities():
 
 @login_required
 def create_post():
-   c_id = request.args.get('id')
+   c_id = request.args.get('c_id')
    if c_id is None:
       return jsonify(success = False, errors = "What community?")
-   w_id = request.args.get('wall')
-   if w_id is None:
-      return jsonify(success = False, errors = "What wall?")
+
    postForm = CreateWallPostForm()
    if postForm.validate_on_submit():
-      w = Wall().query.filter(Wall.id==w_id).first()
       new_post = Post(body = postForm.body.data, user_id=g.user.id)
-      w.create(new_post)
-      db.session.add(w)
+      c = Community().query.filter_by(id=c_id).first()
+      c.create_post(new_post)
+      db.session.add(c)
       db.session.commit()
       return jsonify(success = True)
 
@@ -43,13 +41,25 @@ def create_post():
 
 @login_required
 def comment_post():
-   
-   form = WallPostCommentForm()
+   c_id = request.args.get('c_id')
+   p_id = request.args.get('p_id')
+   if c_id is None:
+      return jsonify(success = False, errors = "What community?")
+   if p_id is None:
+      return jsonify(success = False, errors = "What post?")
 
-#todo
-@login_required
-def get_wall_posts():
-   pass
+   commentForm = WallPostCommentForm()
+   if commentForm.validate_on_submit():
+      print "validated"
+      new_post = Post(body = commentForm.body.data, user_id=g.user.id)
+      p = Post().query.filter_by(id=p_id).first()
+      p.comment(new_post)
+      db.session.add(p)
+      db.session.commit()
+      return jsonify(success = True)
+   print "not alidated"
+   return jsonify(success = False, errors = commentForm.errors)
+
 
 #todo
 @login_required

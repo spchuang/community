@@ -11,34 +11,23 @@
 
    <div class="row">
 
-      <div class="col-md-4">
-         <p><b>Walls</b></p>
-         <hr>
-         {% if walls|length > 0  %}
-            <ul>
-            {% for w in walls %}
-               <li>{{ w.name }}</li>
-               {% endfor %}
-            </ul>
-         {% else %}
-            <p>Bro, you don't even have a wall</p>
-         {% endif %}
 
-      </div>
       <div class="col-md-8">
          <div class="col-md-9" id="wall">
-            <div ">
-               <form id="create_form" action="{{ url_for('create_post', id=community.id, wall=walls[0].id) }}"  method=post>
-               {{ postForm.csrf_token }}
-               {{ render_input_field(postForm.body, "What's up") }}
-               <button id="create_post" class="btn btn-primary" type="button">Post</button>
+            <div>
+               <form id="create_form" action="{{ url_for('create_post', c_id=community.id) }}"  method=post>
+                  {{ postForm.csrf_token }}
+                  {{ render_input_field(postForm.body, "What's up") }}
+                  <button id="create_post" class="btn btn-primary" type="button">Post</button>
                </form>
+
                <hr>
             </div>
 
-            {% for p in posts %}
+
             <div id="wall_content">
-               <div class="post well well-sm">
+               {% for p in posts %}
+               <div class="post well well-sm" id="{{p.Post.id}}">
                   <div class="post_head">
                      <div class="user_avatar pull-left" ></div>
                      <div class="user_meta pull-right" >
@@ -54,12 +43,18 @@
                   </div>
 
                   <div class="post_comments">
-                     This is for comments (TODO)
+                     <form id="comment_form" action="{{ url_for('comment_post', c_id=community.id, p_id=p.Post.id) }}"  method=post>
+                        {{ commentForm.csrf_token }}
+                        {{ render_input_field(postForm.body, "Write a comment") }}
+                        <button id="comment_post" class="btn btn-primary" type="button">Comment</button>
+                     </form>
+
                   </div>
 
                </div>
+               {% endfor %}
             </div>
-            {% endfor %}
+
          </div>
 
 
@@ -76,7 +71,7 @@ BASE_COMMUNITY_URL = '{{url_for('community')}}';
 
 $( document ).ready(function() {
    $("#create_post").click(function(){
-      var form = $("#create_form");
+      var form = $(this).parent();
       var data = form.serialize();
       $.ajax({
          type: form.attr('method'),
@@ -94,6 +89,26 @@ $( document ).ready(function() {
       });
    });
 
+   $(document).on('click', '#comment_post', function(){
+
+      var form = $(this).parent();
+      var data = form.serialize();
+
+      $.ajax({
+         type: form.attr('method'),
+         url: form.attr('action'),
+         data: data,
+      }).done(function(data){
+
+         if(data.success){
+            location.reload();
+         }else{
+            alert("Something went wrong");
+         }
+      }).fail(function(error){
+         console.log(error);
+      });
+   });
 
 });
 

@@ -8,8 +8,8 @@ YES   = 1
 NOT_COMMENT = -1
 
 user_community = db.Table('user_community',
-   db.Column('user_id',      db.Integer, db.ForeignKey('user.id'), nullabe=False),
-   db.Column('community_id', db.Integer, db.ForeignKey('community.id'), nullabe=False),
+   db.Column('user_id',      db.Integer, db.ForeignKey('user.id')),
+   db.Column('community_id', db.Integer, db.ForeignKey('community.id')),
    db.UniqueConstraint('user_id', 'community_id')
 )
 
@@ -51,7 +51,7 @@ class User(db.Model):
 
    def leave(self, community):
       if not self.is_member(community):
-         raise Exception("Not a member of '%s'" %community_name)
+         raise Exception("Not a member of '%s'" %community.name)
       self.joined_communities.remove(community)
       return self
 
@@ -71,18 +71,21 @@ class Community(db.Model):
       backref = db.backref('joined_communities', lazy = 'dynamic'),
       lazy = 'dynamic')
 
-   walls = db.relationship('Wall', lazy='dynamic')
+   posts = db.relationship('Post', lazy='dynamic')
 
-   def create(self, wall):
-      self.walls.append(wall)
+   def create_post(self, post):
+      if post.user_id is None:
+         raise Exception("Who created this post?")
+      post.community_id = self.id
+      post.parent_id    = None
+      self.posts.append(post)
+      return self
 
    def __repr__(self):
       return '<Community %r: %r>' % (self.id, self.name)
 
-
-
-
-
+'''
+#do we need a table for wall? if there's only one wall per community
 class Wall(db.Model):
    __tablename__ = "wall"
    id            = db.Column(db.Integer, primary_key = True)
@@ -99,11 +102,11 @@ class Wall(db.Model):
 
    def __repr__(self):
       return '<Wall %r: %r>' % (self.id, self.name)
+'''
 
 class Post(db.Model):
    __tablename__ = 'post'
    id            = db.Column(db.Integer, primary_key = True)
-   wall_id       = db.Column(db.Integer, db.ForeignKey('wall.id'))
    community_id  = db.Column(db.Integer, db.ForeignKey('community.id'))
    user_id       = db.Column(db.Integer, db.ForeignKey('user.id'))
    parent_id     = db.Column(db.Integer, db.ForeignKey('post.id'))
@@ -124,8 +127,9 @@ class Post(db.Model):
       if post.user_id is None:
          raise Exception("Who commented it?")
 
+      print self
       post.community_id = self.community_id
-      post.wall_id      = self.wall_id
+      post.parent_id    = self.id
       self.comments.append(post)
       return self
 
@@ -162,7 +166,7 @@ def get_community_list(user, is_user_filter=False):
 
    return query
 
-def get_wall_posts(community, wall):
+def get_wall_posts(community):
    query = db.session.query(
                Post,
                User.first_name,
@@ -170,6 +174,6 @@ def get_wall_posts(community, wall):
                User.id
             )\
             .join(User)\
-            .filter(Post.community_id== community.id, Post.wall_id == wall.id, Post.parent_id==None)\
+            .filter(Post.community_id== community.id, Post.parent_id==None)\
             .order_by(Post.created.desc())
    return query

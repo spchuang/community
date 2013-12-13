@@ -49,3 +49,4 @@ app.add_url_rule('/api/communities/create', methods=['POST'],    view_func=commu
 app.add_url_rule('/api/communities/join' ,  methods=['POST'],    view_func=community.join_community)
 app.add_url_rule('/api/communities',   methods=['GET'],     view_func=community.community_list)
 app.add_url_rule('/api/community/create_post',  methods=['POST'],     view_func=community.create_post)
+app.add_url_rule('/api/community/comment_post',  methods=['POST'],     view_func=community.comment_post)

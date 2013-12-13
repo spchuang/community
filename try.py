@@ -1,5 +1,5 @@
-from app import db
-from app.models import User, Community, user_community, Post, Wall
+from src import db
+from db.models import User, Community, user_community, Post
 def test_community_list():
    FILTER_BY_USER = True
    user = User().query.filter_by(user_name='spchuang').first()
@@ -46,7 +46,7 @@ def test_community_list():
        print c[0]
        print c[2]
 
-def get_wall_posts(community, wall):
+def get_wall_posts(community):
    query = db.session.query(
                Post,
                User.first_name,
@@ -54,12 +54,12 @@ def get_wall_posts(community, wall):
                User.id
             )\
             .join(User)\
-            .filter(Post.community_id== community.id, Post.wall_id == wall.id, Post.parent_id==None)
+            .filter(Post.community_id== community.id, Post.parent_id==None)\
+            .order_by(Post.created.desc())
    print query.all()
 
 c =Community.query.filter_by(id=1).first()
-w =c.walls.first()
 print c
-print w
 
-get_wall_posts(c,w)
+
+get_wall_posts(c)

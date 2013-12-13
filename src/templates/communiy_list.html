@@ -87,7 +87,7 @@ function refresh_community_list(){
 
          $.each(data.data, function(key, c){
             var c_string = '<li id="community_'+c.id+'">'
-                         + '<a href="' +BASE_COMMUNITY_URL+'?id='+c.id+'">'
+                         + '<a href="' +BASE_COMMUNITY_URL+'?c_id='+c.id+'">'
                          + c.name+ ' </a>('+c.num_members+')';
             if(!c.is_member){
                c_string += '<button class="join_community btn btn-info pull-right" >Join</button>';
