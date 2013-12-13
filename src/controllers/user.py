@@ -1,9 +1,9 @@
-from app.forms import LoginForm, SignupForm
+from src.forms import LoginForm, SignupForm
 from flask import session, g, redirect, url_for, render_template, request
 from flask.ext.login import login_user, login_required,logout_user
 import bcrypt
-from app.models import User
-from app import db
+from db.models import User
+from src import db
 
 #https://flask-login.readthedocs.org/en/latest/
 
@@ -30,7 +30,6 @@ def login():
          
    form = LoginForm()
    if form.validate_on_submit():
-
       user = User.query.filter_by(user_name = form.user_name.data).first()
       if user is not None and user.password == bcrypt.hashpw(form.password.data, user.password):
          login_user(user, remember = form.remember_me.data)   

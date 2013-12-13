@@ -1,8 +1,8 @@
 from flask import jsonify,session, g, redirect, url_for, render_template, request, abort
 from flask.ext.login import login_user, login_required,logout_user
-from app.forms import CreateCommunityForm,CreateWallPostForm
-from app.models import Community, User, Wall,Post, get_community_list, get_wall_posts
-from app import db
+from src.forms import CreateCommunityForm,CreateWallPostForm, WallPostCommentForm
+from db.models import Community, User, Wall,Post, get_community_list, get_wall_posts
+from src import db
 
 @login_required
 def community():
@@ -32,28 +32,29 @@ def create_post():
       return jsonify(success = False, errors = "What wall?")
    postForm = CreateWallPostForm()
    if postForm.validate_on_submit():
-      print request.form
-
       w = Wall().query.filter(Wall.id==w_id).first()
       new_post = Post(body = postForm.body.data, user_id=g.user.id)
       w.create(new_post)
       db.session.add(w)
       db.session.commit()
-
-
-
-      '''
-      new_community = Community(name   = form.name.data,
-                                description  = form.description.data)
-      db.session.add(new_community)
-      db.session.commit()
-      g.user.join(new_community)
-      db.session.add(g.user)
-      db.session.commit()
-      '''
       return jsonify(success = True)
 
    return jsonify(success = False, errors = postForm.errors)
+
+@login_required
+def comment_post():
+   
+   form = WallPostCommentForm()
+
+#todo
+@login_required
+def get_wall_posts():
+   pass
+
+#todo
+@login_required
+def get_post_comments():
+   pass
 
 @login_required
 def community_list():

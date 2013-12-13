@@ -26,3 +26,6 @@ class CreateCommunityForm(Form):
 
 class CreateWallPostForm(Form):
    body   = TextField('body',  [validators.Required(),validators.Length(max=1000)])
+
+class WallPostCommentForm(Form):
+   body   = TextField('body',  [validators.Required(),validators.Length(max=1000)])

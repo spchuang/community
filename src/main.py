@@ -4,8 +4,8 @@ from controllers import user, community
 from flask import request, session, g, redirect, url_for, \
    abort, render_template, flash
 from flask.ext.login import login_user, logout_user, current_user, login_required
-from app import app, login_manager, db
-from models import User
+from src import app, login_manager, db
+from db.models import User
 
 @app.before_request
 def before_request():

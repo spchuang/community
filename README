@@ -57,3 +57,10 @@ http://stackoverflow.com/questions/4048151/what-are-the-options-for-storing-hier
 
 Question:
 1. initie comments? self-referencial table or only one layer of comments
+
+
+Alemic db migration
+run : "alembic revision --autogenerate -m "Added some table"
+then : alembic upgrade head
+
+see http://mattupstate.com/python/databases/2012/11/15/database-migrations-with-alembic-sqlalchemy-and-flask.html
