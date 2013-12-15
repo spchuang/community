@@ -27,6 +27,7 @@ def posts():
 
    def merge_posts(p):
       post = p.serialize
+
       post['user'] = {
          "first_name" : p.user.first_name.capitalize(),
          "last_name"  : p.user.last_name.capitalize(),

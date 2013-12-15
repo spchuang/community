@@ -1,5 +1,6 @@
 from src import db
 from datetime import datetime
+import dateutil.parser as parser
 import json
 
 USER  = 0
@@ -10,10 +11,10 @@ NOT_COMMENT = -1
 
 #see http://stackoverflow.com/questions/7102754/jsonify-a-sqlalchemy-result-set-in-flask
 def dump_datetime(value):
-    """Deserialize datetime object into string form for JSON processing."""
-    if value is None:
-        return None
-    return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
+   if value is None:
+      return None
+   return value.strftime("%Y-%m-%d") +"T"+ value.strftime("%H:%M:%S")+"Z"
+
 
 user_community = db.Table('user_community',
    db.Column('user_id',      db.Integer, db.ForeignKey('user.id')),
@@ -133,8 +134,8 @@ class Post(db.Model):
          'id'           : self.id,
          'community_id' : self.community_id,
          'body'         : self.body,
-         'created'      : self.created,
-         'modified'     : self.modified
+         'created'      : dump_datetime(self.created),
+         'modified'     : dump_datetime(self.modified)
       }
 
    def __repr__(self):
@@ -147,7 +148,6 @@ class Post(db.Model):
       if post.user_id is None:
          raise Exception("Who commented it?")
 
-      print self
       post.community_id = self.community_id
       post.parent_id    = self.id
       self.comments.append(post)

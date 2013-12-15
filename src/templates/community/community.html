@@ -115,7 +115,7 @@
                {{body}}
             </div>
             <div class="meta">
-               1 day ago ·       Like
+               <span class="comment_time" title="{{created}}"></span>·       Like
             </div>
          </div>
       </div>
@@ -144,8 +144,9 @@ function update_wall(){
                var postHtml    = postTemplate(result.data[i]);
 
                $("#wall_content").append(postHtml);
-               console.log($(postHtml));
             }
+            $(".post_time").timeago();
+            $(".comment_time").timeago();
 
 
          }else{
