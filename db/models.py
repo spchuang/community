@@ -1,11 +1,19 @@
 from src import db
 from datetime import datetime
+import json
 
 USER  = 0
 ADMIN = 1
 NO    = 0
 YES   = 1
 NOT_COMMENT = -1
+
+#see http://stackoverflow.com/questions/7102754/jsonify-a-sqlalchemy-result-set-in-flask
+def dump_datetime(value):
+    """Deserialize datetime object into string form for JSON processing."""
+    if value is None:
+        return None
+    return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
 
 user_community = db.Table('user_community',
    db.Column('user_id',      db.Integer, db.ForeignKey('user.id')),
@@ -117,6 +125,18 @@ class Post(db.Model):
    comments = db.relationship('Post', lazy='dynamic')
    user     = db.relationship('User')
 
+
+   @property
+   def serialize(self):
+      """Return object data in easily serializeable format"""
+      return {
+         'id'           : self.id,
+         'community_id' : self.community_id,
+         'body'         : self.body,
+         'created'      : self.created,
+         'modified'     : self.modified,
+      }
+
    def __repr__(self):
       return '<Post %r>' % (self.id)
 
@@ -166,7 +186,7 @@ def get_community_list(user, is_user_filter=False):
 
    return query
 
-def get_wall_posts(community):
+def get_wall_posts(c_id):
    query = db.session.query(
                Post,
                User.first_name,
@@ -174,6 +194,7 @@ def get_wall_posts(community):
                User.id
             )\
             .join(User)\
-            .filter(Post.community_id== community.id, Post.parent_id==None)\
+            .filter(Post.community_id== c_id, Post.parent_id==None)\
             .order_by(Post.created.desc())
    return query
+

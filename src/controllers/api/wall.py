@@ -6,10 +6,34 @@ from src import db
 
 api = Blueprint('wall', __name__, url_prefix='/api/wall')
 
-#todo
+
+@api.route('/posts')
 @login_required
-def get_post_comments():
-   pass
+def posts():
+   c_id = request.args.get('c_id')
+   if c_id is None:
+      return jsonify(success = False, errors = "What community?")
+
+   posts = get_wall_posts(c_id).all()
+   def merge_result(p):
+
+      post = p.Post.serialize
+      post['user'] = {
+         "first_name" : p.first_name.capitalize(),
+         "last_name"  : p.last_name.capitalize(),
+         "user_id"    : p.id
+      }
+      post['comment'] = {
+         'url'    : url_for('wall.comment_post', c_id=c_id, p_id=p.Post.id)
+      }
+
+
+      return post
+
+   #return map(merge_result, posts)
+
+   return jsonify(success = True, data= map(merge_result, posts))
+
 
 
 @api.route('/new_post', methods=['POST'])

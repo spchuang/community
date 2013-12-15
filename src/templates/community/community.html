@@ -26,6 +26,7 @@
 
 
             <div id="wall_content">
+               <!--
                {% for p in posts %}
                <div class="post well well-sm" id="{{p.Post.id}}">
                   <div class="post_head">
@@ -53,6 +54,7 @@
 
                </div>
                {% endfor %}
+               !-->
             </div>
 
          </div>
@@ -62,14 +64,70 @@
    </div>
 
 </div>
+<script id="post-template" type="text/x-handlebars-template">
+
+   <div class="post well well-sm" id="{{id}}">
+      <div class="post_head">
+{% raw %}
+         <div class="user_avatar pull-left" >
+
+         </div>
+         <div class="user_meta pull-right" >
+            <div class="user_name">{{user.first_name}} {{user.last_name}}</div>
+            <div class="post_time">{{created}}</div>
+         </div>
+      </div>
+      <div class="post_body">
+         {{body}}
+      </div>
+
+      <div class="post_action">
+         Like . Comment . Share
+      </div>
+      <div class="post_comments">
+
+         <form id="comment_form" action="{{comment.url}}"  method=post>
+{% endraw %}
+            {{ commentForm.csrf_token }}
+            {{ render_input_field(commentForm.body, "Write a comment") }}
+            <button id="comment_post" class="btn btn-primary" type="button">Comment</button>
+         </form>
+
+      </div>
+
+   </div>
+
+</script>
+
 
 <script type=text/javascript>
 
 USER_NAME = '{{type}}';
 BASE_COMMUNITY_URL = '{{url_for('community')}}';
+var source   = $("#post-template").html();
+var postTemplate = Handlebars.compile(source);
+console.log(postTemplate);
 
+function update_wall(){
+   $.get('{{ url_for('wall.posts', c_id=community.id) }}')
+      .done(function(result){
+         if(result.success){
+
+            for(var i in result.data){
+               var postHtml    = postTemplate(result.data[i]);
+               $("#wall_content").append(postHtml);
+            }
+         }else{
+            //error handling
+         }
+
+      }).fail(function(error){
+         //request error
+      });
+}
 
 $( document ).ready(function() {
+   update_wall();
    $("#create_post").click(function(){
       var form = $(this).parent();
       var data = form.serialize();
@@ -93,7 +151,8 @@ $( document ).ready(function() {
 
       var form = $(this).parent();
       var data = form.serialize();
-
+      console.log(data);
+      return;
       $.ajax({
          type: form.attr('method'),
          url: form.attr('action'),

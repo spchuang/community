@@ -1,6 +1,8 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, login_required, current_user
+from flask_wtf.csrf import CsrfProtect
+
 
 
 #----------------------------------------
@@ -14,5 +16,8 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+#flask-wtf
+CsrfProtect(app)
 
 from src import main
