@@ -47,8 +47,9 @@ def create():
 @api.route('/join', methods=['POST'])
 @login_required
 def join():
+   print request.form
    id =  request.form["id"]
-
+   print id
    join_community = Community().query.filter_by(id=id).first()
    try:
       g.user.join(join_community)

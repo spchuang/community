@@ -10,7 +10,9 @@
    </div>
 
    <div class="row">
-
+      <div class="col-md-4">
+         This is the side
+      </div>
 
       <div class="col-md-8">
          <div class="col-md-9" id="wall">
@@ -26,35 +28,7 @@
 
 
             <div id="wall_content">
-               <!--
-               {% for p in posts %}
-               <div class="post well well-sm" id="{{p.Post.id}}">
-                  <div class="post_head">
-                     <div class="user_avatar pull-left" ></div>
-                     <div class="user_meta pull-right" >
-                        <div class="user_name">{{p.first_name | capitalize}} {{p.last_name|capitalize}}</div>
-                        <div class="post_time">{{p.Post.created}}</div>
-                     </div>
-                  </div>
-                  <div class="post_body">
-                     {{p.Post.body}}
-                  </div>
-                  <div class="post_action">
-                     Like . Comment . Share
-                  </div>
 
-                  <div class="post_comments">
-                     <form id="comment_form" action="{{ url_for('wall.comment_post', c_id=community.id, p_id=p.Post.id) }}"  method=post>
-                        {{ commentForm.csrf_token }}
-                        {{ render_input_field(postForm.body, "Write a comment") }}
-                        <button id="comment_post" class="btn btn-primary" type="button">Comment</button>
-                     </form>
-
-                  </div>
-
-               </div>
-               {% endfor %}
-               !-->
             </div>
 
          </div>
@@ -131,7 +105,6 @@
 <script type=text/javascript>
 
 USER_NAME = '{{type}}';
-BASE_COMMUNITY_URL = '{{url_for('community')}}';
 var source   = $("#post-template").html();
 var postTemplate = Handlebars.compile(source);
 Handlebars.registerPartial("comments", $("#comments-partial").html());

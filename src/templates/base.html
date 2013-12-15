@@ -2,6 +2,7 @@
 <html lang="en">
 	<head>
 	<title>Community</title>
+   <meta name="csrf-token" content="{{ csrf_token() }}">
 	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
@@ -17,6 +18,18 @@
     <!--handlebar!-->
     <script src="{{ url_for('static', filename='js/handlebars-v1.1.2.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery.timeago.js') }}"></script>
+    <script>
+      var csrftoken = $('meta[name=csrf-token]').attr('content')
+
+      $.ajaxSetup({
+          beforeSend: function(xhr, settings) {
+              if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                  xhr.setRequestHeader("X-CSRFToken", csrftoken)
+              }
+          }
+      })
+
+    </script>
 	</head>
 
 <body>
@@ -36,7 +49,7 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="{{ url_for('communities') }}">Communities</a></li>
+            <li><a href="{{ url_for('community_page.list') }}">Communities</a></li>
             
           </ul>
          <form class="navbar-form navbar-left" role="search">
@@ -46,8 +59,8 @@
          <button type="submit" class="btn btn-default">Submit</button>
          </form>
           <ul class="nav navbar-nav navbar-right">
-          	<li><a href="{{ url_for('profile') }}">Profile</a></li>
-            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+          	<li><a href="{{ url_for('account.profile') }}">Profile</a></li>
+            <li><a href="{{ url_for('account.logout') }}">Logout</a></li>
 
           </ul>
         </div><!--/.nav-collapse -->
@@ -58,8 +71,8 @@
 
           </ul>
           <ul class="nav navbar-nav navbar-right">
-          	<li><a href="{{ url_for('signup') }}">Signup</a></li>
-            <li><a href="{{ url_for('login') }}">Login</a></li>
+          	<li><a href="{{ url_for('account.signup') }}">Signup</a></li>
+            <li><a href="{{ url_for('account.login') }}">Login</a></li>
             
 
           </ul>

@@ -5,8 +5,8 @@
 <div class="container">
 
    <div class="col-md-3">
-      <h4><a href="{{url_for('communities', get='public')}}">Public Communities</a></h4>
-      <h4><a href="{{url_for('communities', get=g.user.user_name)}}">My Communities</a></h4>
+      <h4><a href="{{url_for('community_page.list', get='public')}}">Public Communities</a></h4>
+      <h4><a href="{{url_for('community_page.list', get=g.user.user_name)}}">My Communities</a></h4>
    </div>
    
    <div id="right_col" class="col-md-9">
@@ -72,7 +72,7 @@
 <script type=text/javascript>
 
 USER_NAME = '{{type}}';
-BASE_COMMUNITY_URL = '{{url_for('community')}}';
+BASE_COMMUNITY_URL = '{{url_for('community_page.index')}}';
 
 function refresh_community_list(){
    $.get('{{url_for('communities.list')}}?get='+USER_NAME)
@@ -103,6 +103,7 @@ function refresh_community_list(){
 }
 
 function join_community(id){
+
    $.ajax({
       type: 'POST',
       url: '{{url_for('communities.join')}}',
@@ -113,6 +114,8 @@ function join_community(id){
       }else{
          alert(data.errors);
       }
+   }).fail(function(errors){
+      console.log(errors);
    });
 
 }
