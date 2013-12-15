@@ -15,7 +15,7 @@
       <div class="col-md-8">
          <div class="col-md-9" id="wall">
             <div>
-               <form id="create_form" action="{{ url_for('create_post', c_id=community.id) }}"  method=post>
+               <form id="create_form" action="{{ url_for('wall.new_post', c_id=community.id) }}"  method=post>
                   {{ postForm.csrf_token }}
                   {{ render_input_field(postForm.body, "What's up") }}
                   <button id="create_post" class="btn btn-primary" type="button">Post</button>
@@ -43,7 +43,7 @@
                   </div>
 
                   <div class="post_comments">
-                     <form id="comment_form" action="{{ url_for('comment_post', c_id=community.id, p_id=p.Post.id) }}"  method=post>
+                     <form id="comment_form" action="{{ url_for('wall.comment_post', c_id=community.id, p_id=p.Post.id) }}"  method=post>
                         {{ commentForm.csrf_token }}
                         {{ render_input_field(postForm.body, "Write a comment") }}
                         <button id="comment_post" class="btn btn-primary" type="button">Comment</button>

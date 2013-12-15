@@ -21,7 +21,7 @@ def signup():
       db.session.add(new_user)
       db.session.commit()
       return redirect(url_for('login'))
-   return render_template('signup.html', form=form)
+   return render_template('account/signup.html', form=form)
    
 def login():
    #if user is already logged in, take him somewhere else
@@ -35,7 +35,7 @@ def login():
          login_user(user, remember = form.remember_me.data)   
          return redirect(request.args.get('next') or url_for('communities'))
    
-   return render_template('login.html', form=form)
+   return render_template('account/login.html', form=form)
    
 @login_required
 def logout():
@@ -44,4 +44,4 @@ def logout():
 
 @login_required
 def profile():
-   return render_template('profile.html')
+   return render_template('account/profile.html')
