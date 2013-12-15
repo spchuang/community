@@ -6,6 +6,15 @@ from src import db
 
 api = Blueprint('wall', __name__, url_prefix='/api/wall')
 
+def merge_comments(p):
+   post = p.serialize
+   post['user'] = {
+      "first_name" : p.user.first_name.capitalize(),
+      "last_name"  : p.user.last_name.capitalize(),
+      "user_id"    : p.user.id,
+   }
+   return post
+
 
 @api.route('/posts')
 @login_required
@@ -15,24 +24,24 @@ def posts():
       return jsonify(success = False, errors = "What community?")
 
    posts = get_wall_posts(c_id).all()
-   def merge_result(p):
 
-      post = p.Post.serialize
+   def merge_posts(p):
+      post = p.serialize
       post['user'] = {
-         "first_name" : p.first_name.capitalize(),
-         "last_name"  : p.last_name.capitalize(),
-         "user_id"    : p.id
+         "first_name" : p.user.first_name.capitalize(),
+         "last_name"  : p.user.last_name.capitalize(),
+         "user_id"    : p.user.id,
       }
-      post['comment'] = {
-         'url'    : url_for('wall.comment_post', c_id=c_id, p_id=p.Post.id)
+      post['action'] = {
+         'comment' :url_for('wall.comment_post', c_id=c_id, p_id=p.id)
       }
-
+      post['comments'] = map(merge_comments, p.comments)
 
       return post
 
    #return map(merge_result, posts)
 
-   return jsonify(success = True, data= map(merge_result, posts))
+   return jsonify(success = True, data= map(merge_posts, posts))
 
 
 
@@ -67,12 +76,10 @@ def comment_post():
 
    commentForm = WallPostCommentForm()
    if commentForm.validate_on_submit():
-      print "validated"
       new_post = Post(body = commentForm.body.data, user_id=g.user.id)
       p = Post().query.filter_by(id=p_id).first()
       p.comment(new_post)
       db.session.add(p)
       db.session.commit()
       return jsonify(success = True)
-   print "not alidated"
    return jsonify(success = False, errors = commentForm.errors)

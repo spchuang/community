@@ -72,32 +72,60 @@
          <div class="user_avatar pull-left" >
 
          </div>
-         <div class="user_meta pull-right" >
-            <div class="user_name">{{user.first_name}} {{user.last_name}}</div>
-            <div class="post_time">{{created}}</div>
+         <div class="post_meta pull-right" >
+            <div class="post_user">{{user.first_name}} {{user.last_name}}</div>
+            <div class="post_time" title="{{created}}"></div>
          </div>
       </div>
-      <div class="post_body">
+      <div class="post_content">
          {{body}}
       </div>
 
       <div class="post_action">
          Like . Comment . Share
       </div>
-      <div class="post_comments">
+      <div class="comments_container">
 
-         <form id="comment_form" action="{{comment.url}}"  method=post>
-{% endraw %}
-            {{ commentForm.csrf_token }}
-            {{ render_input_field(commentForm.body, "Write a comment") }}
-            <button id="comment_post" class="btn btn-primary" type="button">Comment</button>
-         </form>
+         {{> comments this.comments}}
+         <div class="comment_action">
+            <form id="comment_form" action="{{action.comment}}"  method=post>
+   {% endraw %}
+               {{ commentForm.csrf_token }}
+               {{ render_input_field(commentForm.body, "Write a comment") }}
+               <button id="comment_post" class="btn btn-primary" type="button">Comment</button>
+            </form>
+         </div>
 
       </div>
 
    </div>
 
 </script>
+<script id="comments-partial" type="text/x-handlebars-template">
+{% raw %}
+   <ul class="comments_list">
+   {{#each this}}
+   <li>
+      <div class="post_comment">
+         <div class="user_avatar" >
+         </div>
+         <div class="comment_body">
+            <div class="user_name">{{user.first_name}} {{user.last_name}}</div>
+            <div class="comment_content">
+               {{body}}
+            </div>
+            <div class="meta">
+               1 day ago ·       Like
+            </div>
+         </div>
+      </div>
+   </li>
+  {{/each}}
+   </ul>
+
+{% endraw %}
+</script>
+
 
 
 <script type=text/javascript>
@@ -106,17 +134,20 @@ USER_NAME = '{{type}}';
 BASE_COMMUNITY_URL = '{{url_for('community')}}';
 var source   = $("#post-template").html();
 var postTemplate = Handlebars.compile(source);
-console.log(postTemplate);
+Handlebars.registerPartial("comments", $("#comments-partial").html());
 
 function update_wall(){
    $.get('{{ url_for('wall.posts', c_id=community.id) }}')
       .done(function(result){
          if(result.success){
-
             for(var i in result.data){
                var postHtml    = postTemplate(result.data[i]);
+
                $("#wall_content").append(postHtml);
+               console.log($(postHtml));
             }
+
+
          }else{
             //error handling
          }
@@ -136,7 +167,7 @@ $( document ).ready(function() {
          url: form.attr('action'),
          data: data,
       }).done(function(data){
-         console.log(data);
+
          if(data.success){
             location.reload();
          }else{
@@ -151,8 +182,8 @@ $( document ).ready(function() {
 
       var form = $(this).parent();
       var data = form.serialize();
-      console.log(data);
-      return;
+
+
       $.ajax({
          type: form.attr('method'),
          url: form.attr('action'),

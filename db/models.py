@@ -118,11 +118,11 @@ class Post(db.Model):
    community_id  = db.Column(db.Integer, db.ForeignKey('community.id'))
    user_id       = db.Column(db.Integer, db.ForeignKey('user.id'))
    parent_id     = db.Column(db.Integer, db.ForeignKey('post.id'))
-   created       = db.Column(db.DateTime, default = datetime.now)
-   modified      = db.Column(db.DateTime, default = datetime.now, onupdate=datetime.now)
+   created       = db.Column(db.DateTime, default = datetime.utcnow)
+   modified      = db.Column(db.DateTime, default = datetime.utcnow, onupdate=datetime.utcnow)
    body          = db.Column(db.String(1000), nullable=False)
 
-   comments = db.relationship('Post', lazy='dynamic')
+   comments = db.relationship('Post', lazy='joined')
    user     = db.relationship('User')
 
 
@@ -134,7 +134,7 @@ class Post(db.Model):
          'community_id' : self.community_id,
          'body'         : self.body,
          'created'      : self.created,
-         'modified'     : self.modified,
+         'modified'     : self.modified
       }
 
    def __repr__(self):
@@ -188,13 +188,23 @@ def get_community_list(user, is_user_filter=False):
 
 def get_wall_posts(c_id):
    query = db.session.query(
-               Post,
-               User.first_name,
-               User.last_name,
-               User.id
+               Post
             )\
             .join(User)\
+            .options(db.joinedload(Post.comments))\
             .filter(Post.community_id== c_id, Post.parent_id==None)\
             .order_by(Post.created.desc())
+
+   return query
+
+def get_post_comments(p_id):
+   query = db.session.query(
+               Post,
+            )\
+            .join(User)\
+            .options(db.joinedload(Post.comments))\
+            .filter(Post.community_id== c_id, Post.parent_id==None)\
+            .order_by(Post.created.desc())
+
    return query
 
