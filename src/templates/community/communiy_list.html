@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
-{% from "_formhelpers.html" import render_input_field%}
+{% from "helper/formhelpers.html" import render_input_field%}
 
 <div class="container">
 
@@ -49,7 +49,7 @@
             <h4 class="modal-title" id="myModalLabel">Create New Community</h4>
          </div>
          <div class="modal-body">
-            <form id="create_form" action="{{ url_for('create_community') }}"  method=post>
+            <form id="create_form" action="{{ url_for('communities.create') }}"  method=post>
                {{ form.csrf_token }}
                <div class="form-group">
                   <label>Name</label>
@@ -75,7 +75,7 @@ USER_NAME = '{{type}}';
 BASE_COMMUNITY_URL = '{{url_for('community')}}';
 
 function refresh_community_list(){
-   $.get('{{url_for('community_list')}}?get='+USER_NAME)
+   $.get('{{url_for('communities.list')}}?get='+USER_NAME)
       .done(function(data){
          var content = $("#community_content");
          content.empty();
@@ -105,7 +105,7 @@ function refresh_community_list(){
 function join_community(id){
    $.ajax({
       type: 'POST',
-      url: '{{url_for('join_community')}}',
+      url: '{{url_for('communities.join')}}',
       data: {id: id},
    }).done(function(data){
       if(data.success){
