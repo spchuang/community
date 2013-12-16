@@ -18,7 +18,6 @@
          <div class="col-md-9" id="wall">
             <div>
                <form id="create_form" action="{{ url_for('wall.new_post', c_id=community.id) }}"  method=post>
-                  {{ postForm.csrf_token }}
                   {{ render_input_field(postForm.body, "What's up") }}
                   <button id="create_post" class="btn btn-primary" type="button">Post</button>
                </form>
@@ -39,10 +38,10 @@
 
 </div>
 <script id="post-template" type="text/x-handlebars-template">
-
+{% raw %}
    <div class="post well well-sm" id="{{id}}">
       <div class="post_head">
-{% raw %}
+
          <div class="user_avatar pull-left" >
 
          </div>
@@ -63,8 +62,8 @@
          {{> comments this.comments}}
          <div class="comment_action">
             <form id="comment_form" action="{{action.comment}}"  method=post>
-   {% endraw %}
-               {{ commentForm.csrf_token }}
+
+{% endraw %}
                {{ render_input_field(commentForm.body, "Write a comment") }}
                <button id="comment_post" class="btn btn-primary" type="button">Comment</button>
             </form>

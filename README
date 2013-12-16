@@ -17,32 +17,55 @@ python run.py
 
 Top-level structure:
 community/
+   db/
+      migration/  : alembic migration stuff
+         version/ : different revision scripts for db migration
+      models.py   : sql-alchemy model definition
+      db_create.py: create db
    app/
       controllers/ :controllers are pretty much functions separated out from main for sake of readability
-         community.py : community list, community api,
-         user.py      : User related stuff; like logins, logout, profile page, signup
+         api/            : API endpoints for ajax
+         community.py    : community list, community api,
+         account.py      : User related stuff; like logins, logout, profile page, signup
       static/
          css/
          img/
          js/
       templates/
-         _formhelpers.html : defines some jinja2 macro
-         404.html          : 404 page
+         account/
+         community/
+         helper/ : jinja macros
+         home/
+         status/
+            404.html       : 404 page
          base.html         : the base template (defines javascript files and navigation header)
-         (rest)            : jinja2 template files
 
       __init__.py : initializaiton of the app (ex. for sqlachemy and flask-login)
       forms.py    : definition of Flask-WTF forms
       main.py     : main entry point of the app; defines routing
-      models.py   : sql-alchemy model definition
 
-   db_create.py : Script for creating the database
+
    config.py    : Application configuration
    run.py       : start the application
    try.py       : just for testing out sqlalchemy quries
    test.py      : Unit tester (undone)
-   schema_mysql.sql: the mysql definition of table schema (we can probably remove it later since we are using sqlalchemy now)
    requirements.txt: python dependency list
+
+Libraries:
+Backend:
+Flask: micro framework
+Jinja2: templating
+Flask-sqlAlchemy: main db ORM
+Flask-login: login library. Can integrate with fb easier later
+Flask-WTF: form creation/validation
+py-bcrypt: password hashing
+alembic: db migration
+
+Front:
+JQuery
+handlebar: templating (http://handlebarsjs.com/)
+jquery.timeago (http://timeago.yarp.com/)
+
 
 
 TODO list:
