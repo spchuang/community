@@ -1,7 +1,5 @@
 # all the imports
 import config
-from controllers import account
-
 from flask import request, session, g, redirect, url_for, \
    abort, render_template, flash
 from flask.ext.login import login_user, logout_user, current_user, login_required

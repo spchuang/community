@@ -30,27 +30,10 @@ CREATE TABLE communities(
    PRIMARY KEY (id)
 );
 
-CREATE TABLE events(
-   id          INTEGER(11)     NOT NULL AUTO_INCREMENT, 
-   name        VARCHAR(50)     NOT NULL,
-   dtime       DATETIME        NOT NULL,
-   description VARCHAR(300),   
-   PRIMARY KEY (id)
-);
-
 CREATE TABLE user_in_community(
    id             INTEGER(11)     NOT NULL AUTO_INCREMENT, 
    user_id        INTEGER(11)     NOT NULL,
    community_id  INTEGER(11)     NOT NULL,
    PRIMARY KEY (id),
    Unique(user_id, community_id)
-);
-
-CREATE TABLE event_in_community(
-   id             INTEGER(11)     NOT NULL AUTO_INCREMENT, 
-   event_id        INTEGER(11)     NOT NULL,
-   user_id        INTEGER(11)     NOT NULL,
-   community_id  INTEGER(11)     NOT NULL,
-   PRIMARY KEY (id),
-   Unique(event_id, community_id)
 );

@@ -6,4 +6,4 @@ Flask-SQLAlchemy==1.0
 Flask-Login==0.2.7
 py-bcrypt==0.4
 Flask-WTF==0.9.3
-sqlalchemy-migrate==0.8.2
+
