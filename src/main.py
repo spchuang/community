@@ -12,6 +12,7 @@ from controllers.account import mod as account
 from controllers.community import mod as community
 from controllers.api.communities import api as communities_api
 from controllers.api.wall import api as wall_api
+from controllers.api.calendar import api as calendar_api
 
 @app.before_request
 def before_request():
@@ -46,3 +47,4 @@ app.register_blueprint(account)
 app.register_blueprint(community)
 app.register_blueprint(communities_api)
 app.register_blueprint(wall_api)
+app.register_blueprint(calendar_api)

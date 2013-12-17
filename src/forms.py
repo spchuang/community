@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import BooleanField, TextField, PasswordField, validators
+from wtforms import BooleanField, TextField, PasswordField, DateTimeField, validators
 from wtforms.validators import DataRequired
 
 class LoginForm(Form):
@@ -29,3 +29,8 @@ class CreateWallPostForm(Form):
 
 class WallPostCommentForm(Form):
    body   = TextField('body',  [validators.Required(),validators.Length(max=1000)])
+
+class CreateEventForm(Form):
+   name = TextField('name', [validators.Required()]) 
+   date = DateTimeField('date', [validators.Required()])
+   description = TextField('description')

@@ -22,6 +22,18 @@ user_community = db.Table('user_community',
    db.UniqueConstraint('user_id', 'community_id')
 )
 
+#possibly add in user id, for event creator
+class Event(db.Model):
+   __tablename__ = "event"
+   id            = db.Column(db.Integer, primary_key = True)
+   community_id  = db.Column(db.Integer, db.ForeignKey('community.id'))
+   name          = db.Column(db.String(60), nullable=False)
+   date          = db.Column(db.DateTime, nullable=False)
+   description   = db.Column(db.Text)
+
+   def __repr__(self):
+      return '<Event %r>' % (self.name)
+
 class User(db.Model):
    __tablename__ = "user"
    id            = db.Column(db.Integer, primary_key = True)
@@ -80,6 +92,9 @@ class Community(db.Model):
       backref = db.backref('joined_communities', lazy = 'dynamic'),
       lazy = 'dynamic')
 
+   
+   events = db.relationship('Event', lazy = 'dynamic')
+   
    posts = db.relationship('Post', lazy='dynamic')
 
    def create_post(self, post):
@@ -88,6 +103,12 @@ class Community(db.Model):
       post.community_id = self.id
       post.parent_id    = None
       self.posts.append(post)
+      return self
+
+   #prob add in user_id check later, event creator
+   def create_event(self, event):
+      event.community_id = self.id
+      self.events.append(event)
       return self
 
    def __repr__(self):
@@ -197,6 +218,7 @@ def get_wall_posts(c_id):
 
    return query
 
+#just wondering what is the purpose of passing p_id here?
 def get_post_comments(p_id):
    query = db.session.query(
                Post,
@@ -206,5 +228,21 @@ def get_post_comments(p_id):
             .filter(Post.community_id== c_id, Post.parent_id==None)\
             .order_by(Post.created.desc())
 
+   return query
+
+#used to return events for a specific user
+def get_event_list(user):
+   subq_communities = db.session.query(
+                        user_community,
+                       )\
+                       .filter(user_community.c.user_id==user.id)\
+                       .subquery()
+
+   query = db.session.query(
+               Event,
+               subq_communities
+            )\
+            .filter(Event.community_id==subq_communities.c.community_id)\
+            .order_by(Event.date.asc())
    return query
 
