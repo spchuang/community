@@ -76,7 +76,7 @@
 </script>
 <script id="comments-partial" type="text/x-handlebars-template">
 {% raw %}
-   <ul class="comments_list">
+<ul class="comments_list">
    {{#each this}}
    <li>
       <div class="post_comment">
@@ -93,8 +93,8 @@
          </div>
       </div>
    </li>
-  {{/each}}
-   </ul>
+   {{/each}}
+</ul>
 
 {% endraw %}
 </script>
@@ -103,7 +103,6 @@
 
 <script type=text/javascript>
 
-USER_NAME = '{{type}}';
 var source   = $("#post-template").html();
 var postTemplate = Handlebars.compile(source);
 Handlebars.registerPartial("comments", $("#comments-partial").html());
@@ -112,6 +111,7 @@ function update_wall(){
    $.get('{{ url_for('wall.posts', c_id=community.id) }}')
       .done(function(result){
          if(result.success){
+         console.log(result.data);
             for(var i in result.data){
                var postHtml    = postTemplate(result.data[i]);
 

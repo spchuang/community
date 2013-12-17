@@ -33,7 +33,15 @@ class User(db.Model):
    gender        = db.Column(db.SmallInteger, nullable=False)
    permission    = db.Column(db.SmallInteger, nullable=False, default=USER)
 
-   
+   @property
+   def serialize(self):
+      """Return object data in easily serializeable format"""
+      return {
+         "first_name" : self.first_name.capitalize(),
+         "last_name"  : self.last_name.capitalize(),
+         "user_id"    : self.id,
+      }
+
    def __repr__(self):
       return '<User %r>' % (self.user_name)
    
@@ -72,6 +80,8 @@ class Community(db.Model):
    name          = db.Column(db.String(60), nullable=False)
    description   = db.Column(db.Text)
    is_private    = db.Column(db.SmallInteger, nullable=False, default = NO)
+   created       = db.Column(db.DateTime, default = datetime.utcnow)
+
 
    members = db.relationship('User',
       secondary = user_community,
@@ -82,6 +92,21 @@ class Community(db.Model):
 
    posts = db.relationship('Post', lazy='dynamic')
 
+   @property
+   def serialize(self):
+      """Return object data in easily serializeable format"""
+      return {
+         'id'           : self.id,
+         'name'         : self.name,
+         'description'  : self.description,
+         'is_private'   : self.is_private,
+         'created'      : dump_datetime(self.created)
+      }
+
+   def __repr__(self):
+      return '<Community %r: %r>' % (self.id, self.name)
+
+
    def create_post(self, post):
       if post.user_id is None:
          raise Exception("Who created this post?")
@@ -89,9 +114,6 @@ class Community(db.Model):
       post.parent_id    = None
       self.posts.append(post)
       return self
-
-   def __repr__(self):
-      return '<Community %r: %r>' % (self.id, self.name)
 
 '''
 #do we need a table for wall? if there's only one wall per community
@@ -135,7 +157,8 @@ class Post(db.Model):
          'community_id' : self.community_id,
          'body'         : self.body,
          'created'      : dump_datetime(self.created),
-         'modified'     : dump_datetime(self.modified)
+         'modified'     : dump_datetime(self.modified),
+         'user'         : self.user.serialize
       }
 
    def __repr__(self):

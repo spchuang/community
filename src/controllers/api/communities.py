@@ -9,12 +9,12 @@ api = Blueprint('communities', __name__, url_prefix='/api/communities')
 @api.route('/list', methods=['GET'])
 @login_required
 def list():
-   #TODO: show status of user to community (joined? join?)
+
    type = request.args.get('get') or 'public'
    if type == 'public':
-      com = get_community_list(g.user).filter(Community.is_private ==0).all()
+      com_list = get_community_list(g.user).filter(Community.is_private ==0).all()
    elif type == g.user.user_name:
-      com = get_community_list(g.user, is_user_filter=True).filter(Community.is_private ==0).all()
+      com_list = get_community_list(g.user, is_user_filter=True).filter(Community.is_private ==0).all()
 
    else:
       #if looking at other users, must need to be related somehow first.. (belong to the same group?)
@@ -24,10 +24,23 @@ def list():
       else:
          return jsonify(success=False, error="user not found")
 
-   return jsonify(success = True, data= [
-               {'id':c.Community.id, 'name': c.Community.name, 'num_members': c.num_members, 'is_member': c.is_member}
-               for c in com
-          ])
+
+   def merge_com(c):
+      #TODO: show status of user to community (joined? join?)
+      com = c.Community.serialize
+      com['action'] = {
+         'join' :url_for('communities.join', c_id=c.Community.id)
+      }
+      com['url']         = url_for('community_page.index', c_id=c.Community.id)
+      com['is_member']   = c.is_member or 0
+      com['members']     = {
+         'total' : c.num_members,
+         'list'      : []
+      }
+      return com
+
+   return jsonify(success = True, data= map(merge_com, com_list))
+
 
 @api.route('/create',methods=['POST'])
 @login_required
@@ -47,10 +60,11 @@ def create():
 @api.route('/join', methods=['POST'])
 @login_required
 def join():
-   print request.form
-   id =  request.form["id"]
-   print id
-   join_community = Community().query.filter_by(id=id).first()
+   c_id = request.args.get('c_id')
+   if c_id is None:
+      return jsonify(success = False, errors = "What community?")
+   join_community = Community().query.filter_by(id=c_id).first()
+
    try:
       g.user.join(join_community)
    except Exception as e:

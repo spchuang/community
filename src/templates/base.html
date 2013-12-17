@@ -15,9 +15,19 @@
     <script type=text/javascript>
         $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     </script>
+
     <!--handlebar!-->
     <script src="{{ url_for('static', filename='js/handlebars-v1.1.2.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery.timeago.js') }}"></script>
+      <script type=text/javascript>
+      Handlebars.registerHelper('if_eq', function(a, b, opts) {
+         if(a == b){ // Or === depending on your needs
+            return opts.fn(this);
+         }else{
+            return opts.inverse(this);
+         }
+      });
+      </script>
     <script>
       var csrftoken = $('meta[name=csrf-token]').attr('content')
 

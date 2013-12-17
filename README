@@ -90,3 +90,68 @@ see http://mattupstate.com/python/databases/2012/11/15/database-migrations-with-
 
 Handy links (tutorials):
 http://tutorialzine.com/2011/03/custom-facebook-wall-jquery-graph/
+
+
+
+Features (prorotype 1):
+Events:
+   schema:
+      - name
+      - description
+      - location
+      - start
+      - end
+      - frequency? (say every Monday)
+      - Types
+      - created_by
+      - created_on
+      - community_id
+
+   relations:
+      - RSVP
+      - attend list
+   pages:
+      - calendar form (make it super dynamic)
+         - click to create
+         - drag and drop
+         - extend
+         - delete
+      - see a list of upcoming events (next feew days)
+      - see events across communities/single communities
+
+   api endpoint:
+      GET  /api/events/list?c_id=[num or all]
+      POST /api/events/new_event?e_id
+      POST /api/events/update_event?e_id
+      POST /api/events/delete_event?e_id
+
+Task:
+   schema:
+      - name
+      - assign_to
+      - assign_by
+      - deadline (link to event?)
+      - description
+      - create_on
+      - create_by
+      - modify_on
+      - modify_by
+      - tags
+      - community_id
+      - parent_task
+
+
+
+File sharing:
+   - Try s3 free storage first
+
+Groupme integration:
+   - automatic group generation vs user-generate then integrate
+   - message on the site in real time
+
+More:
+Community Relationship:
+Financial Tracking:
+Meeting Tracking
+universal wall:
+   -easy integrate a comment wall to any page so that we can comment on say, an event or a task.

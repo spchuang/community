@@ -21,22 +21,9 @@
          <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createCommunityModal">Create Community</button>
       </div>
       
-      <div class="row" id="community_content">
-          <!--
-      {% if communities %}
-      <ul class="community_items">
-         {% for c in communities %}
-         <li id="community_{{c.id}}">
-            {{ c.name }}
-         </li>
-         {% endfor %}
-      </ul>
-      {% else %}
-         <h3>You don't belong to any groups! Join or create one :)</h3>
-      {% endif %}
+      <div class="row" id="community_list_content">
+
       </div>
-      !-->
-   </div>
 
 
 </div>
@@ -50,7 +37,6 @@
          </div>
          <div class="modal-body">
             <form id="create_form" action="{{ url_for('communities.create') }}"  method=post>
-               {{ form.csrf_token }}
                <div class="form-group">
                   <label>Name</label>
                    {{ render_input_field(form.name, "Group name") }}
@@ -69,50 +55,65 @@
    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<script id="community-list-template" type="text/x-handlebars-template">
+{% raw %}
+   {{#if this}}
+   <ul class="community_items">
+
+      {{#each this}}
+      <li id="community_{{id}}">
+         <a href="{{url}}">{{name}}</a>({{members.total}})
+         {{#if_eq is_member 0}}
+         <button class="join_community btn btn-info pull-right" data-url="{{action.join}}">
+            Join
+         </button>
+         {{/if_eq}}
+      </li>
+
+      {{/each}}
+   </ul>
+   {{else}}
+      <h3>empty</h3>
+   {{/if}}
+
+{% endraw %}
+</script>
+
 <script type=text/javascript>
 
 USER_NAME = '{{type}}';
-BASE_COMMUNITY_URL = '{{url_for('community_page.index')}}';
+var source   = $("#community-list-template").html();
+var comListTemplate = Handlebars.compile(source);
 
 function refresh_community_list(){
    $.get('{{url_for('communities.list')}}?get='+USER_NAME)
-      .done(function(data){
-         var content = $("#community_content");
-         content.empty();
-         if(data.data.length == 0){
-            content.append(" <h3>You don't belong to any groups! Join or create one :)</h3>");
-            return false;
+      .done(function(result){
+
+         if(result.success){
+            var content = $("#community_list_content");
+            content.empty();
+            var html    = comListTemplate(result.data);
+            content.append(html);
+         }else{
+            //error handling
          }
-         var list = $('<ul class="community_items"></ul>');
 
-         $.each(data.data, function(key, c){
-            var c_string = '<li id="community_'+c.id+'">'
-                         + '<a href="' +BASE_COMMUNITY_URL+'?c_id='+c.id+'">'
-                         + c.name+ ' </a>('+c.num_members+')';
-            if(!c.is_member){
-               c_string += '<button class="join_community btn btn-info pull-right" >Join</button>';
-            }
-            c_string +=' </li>';
-            list.append(c_string);
-         });
-
-
-
-         content.append(list);
+      }).fail(function(error){
+         //request error
       });
 }
 
-function join_community(id){
+function join_community(url){
 
    $.ajax({
       type: 'POST',
-      url: '{{url_for('communities.join')}}',
-      data: {id: id},
-   }).done(function(data){
-      if(data.success){
+      url: url,
+   }).done(function(result){
+      if(result.success){
          refresh_community_list();
       }else{
-         alert(data.errors);
+      console.log(result);
+         alert(result.errors);
       }
    }).fail(function(errors){
       console.log(errors);
@@ -121,9 +122,11 @@ function join_community(id){
 }
 
 $( document ).ready(function() {
-   $(document).on('click','.join_community', function(){
+   $(document).on('click','.join_community', function(e){
       var id = $(this).parent().attr('id').split("_")[1];
-      join_community(id);
+
+
+      join_community($(this).attr('data-url'));
    });
 
    refresh_community_list();
@@ -135,14 +138,14 @@ $( document ).ready(function() {
          type: form.attr('method'),
          url: form.attr('action'),
          data: data,
-      }).done(function(data){
+      }).done(function(result){
          //remove errors
          form.find(".form_field").each(function(){
             $(this).removeClass('has-error');
             $(this).find('ul.error_message').empty();
          });
 
-         if(data.success){
+         if(result.success){
             $('#createCommunityModal').modal('hide');
             //refresh community list
             refresh_community_list();

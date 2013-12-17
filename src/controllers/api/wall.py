@@ -6,14 +6,6 @@ from src import db
 
 api = Blueprint('wall', __name__, url_prefix='/api/wall')
 
-def merge_comments(p):
-   post = p.serialize
-   post['user'] = {
-      "first_name" : p.user.first_name.capitalize(),
-      "last_name"  : p.user.last_name.capitalize(),
-      "user_id"    : p.user.id,
-   }
-   return post
 
 
 @api.route('/posts')
@@ -27,22 +19,13 @@ def posts():
 
    def merge_posts(p):
       post = p.serialize
-      post['user'] = {
-         "first_name" : p.user.first_name.capitalize(),
-         "last_name"  : p.user.last_name.capitalize(),
-         "user_id"    : p.user.id,
-      }
       post['action'] = {
          'comment' :url_for('wall.comment_post', c_id=c_id, p_id=p.id)
       }
-      post['comments'] = map(merge_comments, p.comments)
-
+      post['comments'] = [comment.serialize for comment in p.comments]
       return post
 
-   #return map(merge_result, posts)
-
    return jsonify(success = True, data= map(merge_posts, posts))
-
 
 
 @api.route('/new_post', methods=['POST'])

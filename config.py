@@ -12,4 +12,12 @@ DB_CONFIG = {
    "PASS" : "wD5*sF5%",
    "DB"   : "sql322886"
 }
-SQLALCHEMY_DATABASE_URI = "mysql://%s:%s@%s/%s"%(DB_CONFIG['USER'], DB_CONFIG['PASS'],DB_CONFIG['HOST'],DB_CONFIG['DB'])
+LOCAL_DB_CONFIG = {
+   "HOST" : "127.0.0.1",
+   "USER" : "root",
+   "PASS" : "",
+   "DB"   : "community"
+}
+
+#SQLALCHEMY_DATABASE_URI = "mysql://%s:%s@%s/%s"%(DB_CONFIG['USER'], DB_CONFIG['PASS'],DB_CONFIG['HOST'],DB_CONFIG['DB'])
+SQLALCHEMY_DATABASE_URI = "mysql://%s:%s@%s/%s"%(LOCAL_DB_CONFIG['USER'], LOCAL_DB_CONFIG['PASS'],LOCAL_DB_CONFIG['HOST'],LOCAL_DB_CONFIG['DB'])
