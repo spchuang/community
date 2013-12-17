@@ -15,7 +15,6 @@ def dump_datetime(value):
       return None
    return value.strftime("%Y-%m-%d") +"T"+ value.strftime("%H:%M:%S")+"Z"
 
-
 user_community = db.Table('user_community',
    db.Column('user_id',      db.Integer, db.ForeignKey('user.id')),
    db.Column('community_id', db.Integer, db.ForeignKey('community.id')),
@@ -28,11 +27,16 @@ class Event(db.Model):
    id            = db.Column(db.Integer, primary_key = True)
    community_id  = db.Column(db.Integer, db.ForeignKey('community.id'))
    name          = db.Column(db.String(60), nullable=False)
-   date          = db.Column(db.DateTime, nullable=False)
+   start_on      = db.Column(db.DateTime, nullable=False)
+   end_on        = db.Column(db.DateTime, nullable=False)
+   created_by    = db.Column(db.Integer, db.ForeignKey('user.id'))
+   created_on    = db.Column(db.DateTime, nullable=False, default = datetime.utcnow)
+   modified_by   = db.Column(db.Integer, db.ForeignKey('user.id'))
+   modified_on   = db.Column(db.DateTime, nullable=False, default = datetime.utcnow, onupdate=datetime.utcnow)
    description   = db.Column(db.Text)
 
    def __repr__(self):
-      return '<Event %r>' % (self.name)
+      return '<Event %r %r>' % (self.id, self.name)
 
 class User(db.Model):
    __tablename__ = "user"
@@ -92,8 +96,7 @@ class Community(db.Model):
    name          = db.Column(db.String(60), nullable=False)
    description   = db.Column(db.Text)
    is_private    = db.Column(db.SmallInteger, nullable=False, default = NO)
-   created       = db.Column(db.DateTime, default = datetime.utcnow)
-
+   created_on    = db.Column(db.DateTime, nullable=False, default = datetime.utcnow)
 
    members = db.relationship('User',
       secondary = user_community,
@@ -104,7 +107,6 @@ class Community(db.Model):
 
    
    events = db.relationship('Event', lazy = 'dynamic')
-   
    posts = db.relationship('Post', lazy='dynamic')
 
    @property
@@ -115,7 +117,6 @@ class Community(db.Model):
          'name'         : self.name,
          'description'  : self.description,
          'is_private'   : self.is_private,
-         'created'      : dump_datetime(self.created)
       }
 
    def __repr__(self):
@@ -159,19 +160,40 @@ class Wall(db.Model):
       return '<Wall %r: %r>' % (self.id, self.name)
 '''
 
+class Task(db.Model):
+   __tablename__ = 'task'
+   id            = db.Column(db.Integer, primary_key = True)
+   name          = db.Column(db.String(60), nullable=False)
+   assigned_to   = db.Column(db.Integer, db.ForeignKey('user.id'))
+   assigned_by   = db.Column(db.Integer, db.ForeignKey('user.id'))
+   Summary       = db.Column(db.String(1000), nullable=False)
+   Description   = db.Column(db.String(1000), nullable=False)
+   created_by    = db.Column(db.Integer, db.ForeignKey('user.id'))
+   created_on    = db.Column(db.DateTime, nullable=False, default = datetime.utcnow)
+   modified_by   = db.Column(db.Integer, db.ForeignKey('user.id'))
+   modified_on   = db.Column(db.DateTime, nullable=False, default = datetime.utcnow, onupdate=datetime.utcnow)
+   community_id  = db.Column(db.Integer, db.ForeignKey('community.id'))
+   parent_id     = db.Column(db.Integer, db.ForeignKey('task.id'))
+
+
+   def __repr__(self):
+      return '<Task %r %s>' % (self.id, self.name)
+
+
+
 class Post(db.Model):
    __tablename__ = 'post'
    id            = db.Column(db.Integer, primary_key = True)
    community_id  = db.Column(db.Integer, db.ForeignKey('community.id'))
    user_id       = db.Column(db.Integer, db.ForeignKey('user.id'))
    parent_id     = db.Column(db.Integer, db.ForeignKey('post.id'))
-   created       = db.Column(db.DateTime, default = datetime.utcnow)
-   modified      = db.Column(db.DateTime, default = datetime.utcnow, onupdate=datetime.utcnow)
+   created_on    = db.Column(db.DateTime, nullable=False, default = datetime.utcnow)
+   modified_on   = db.Column(db.DateTime, nullable=False, default = datetime.utcnow, onupdate=datetime.utcnow)
    body          = db.Column(db.String(1000), nullable=False)
 
+   #relationships
    comments = db.relationship('Post', lazy='joined')
    user     = db.relationship('User')
-
 
    @property
    def serialize(self):
