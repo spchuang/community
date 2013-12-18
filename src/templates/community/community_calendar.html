@@ -9,15 +9,15 @@
    
    <div id="right_col" class="col-md-9">
       <div class="row">
-         {% if type == g.user.user_name %}
+         {% if community.id == 'all' %}
             My Events
-         {% elif type == 'community' %}
+         {% else %}
             Community Events
          {% endif %}
          <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createEventModal">Add Event</button>
       </div>
       
-      <div class="row" id="event_list">
+      <div class="row" id="event_list_content">
 
       </div>
 	</div>
@@ -31,19 +31,23 @@
             <h4 class="modal-title" id="myModalLabel">Add New Event</h4>
          </div>
          <div class="modal-body">
-            <form id="create_form" action="{{ url_for('calendar.create_event', c_id=community.id) }}"  method=post>
+            <form id="create_form" action="{{ url_for('calendar.new_event', c_id=community.id) }}"  method=post>
                {{ form.csrf_token }}
                <div class="form-group">
                   <label>Name</label>
-                   {{ render_input_field(form.name, "Event name") }}
+                   {{ render_input_field(form.name, "Event Name") }}
                </div>
                <div class="form-group">
-                  <label>Date</label>
-                   {{ render_input_field(form.date, "Date and Time")}}
+                  <label>Starts</label>
+                   {{ render_input_field(form.start, "Start Date and Time")}}
                </div>
+               <div class="form-group">
+                  <label>Ends</label>
+                   {{ render_input_field(form.end, "End Date and Time")}}
+               </div>              
                <div class="form-group">
                   <label>Description</label>
-                  {{ render_input_field(form.description, "Group Description") }}
+                  {{ render_input_field(form.description, "Event Description") }}
                </div>
             </form>
          </div>
@@ -55,56 +59,64 @@
    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<script id="event-list-template" type="text/x-handlebars-template">
+{% raw %}
+   {{#if this}}
+   <ul class="event_items">
+
+      {{#each this}}
+      <li id="event_{{id}}">
+         {{name}}
+         {{creator}}
+         <button class="delete_event btn btn-info pull-right" data-url="{{delete_event}}">
+            Delete
+         </button>
+      </li>
+
+      {{/each}}
+   </ul>
+   {{else}}
+      <h3>No scheduled events yet!</h3>
+   {{/if}}
+{% endraw %}
+</script>
+
 <script type=text/javascript>
-USER_NAME = '{{type}}';
+var display = '{{community.id}}';
+var source   = $("#event-list-template").html();
+var eventListTemplate = Handlebars.compile(source);
 
 function update_event_list(){
-   if(USER_NAME == 'community'){
-      $.get('{{ url_for('calendar.list', c_id=community.id) }}')
-       .done(function(data){
-         var content = $("#event_list");
+   $.get('{{ url_for('calendar.list', c_id=community.id) }}')
+      .done(function(result){
+         var content = $("#event_list_content");
          content.empty();
-         if(data.data.length == 0){
-            content.append(" <h3>No scheduled events yet!</h3>");
-            return false;
-         }
-         var list = $('<ul class="events"></ul>');
+         var html    = eventListTemplate(result.data);
+         content.append(html); 
+   });
+}
 
-         $.each(data.data, function(key, e){
-            var c_string = '<li id="event_'+e.id+'">'
-                         + e.name;
-            c_string +=' </li>';
-            list.append(c_string);
-         });
-         content.append(list);
-      });
-   }else{
-       $.get('{{url_for('calendar.list')}}?get='+USER_NAME)
-       .done(function(data){
-         var content = $("#event_list");
-         content.empty();
-         if(data.data.length == 0){
-            content.append(" <h3>No scheduled events yet!</h3>");
-            return false;
-         }
-         var list = $('<ul class="events"></ul>');
-
-         $.each(data.data, function(key, e){
-            var c_string = '<li id="event_'+e.id+'">'
-                         + e.name;
-            c_string +=' </li>';
-            list.append(c_string);
-         });
-         content.append(list);
-      });     
-   }
+function delete_event(url){
+   $.ajax({
+      type: 'POST',
+      url: url,
+   }).done(function(result){
+      if(result.success){
+         update_event_list();
+      }else{
+      console.log(result);
+         alert(result.errors);
+      }
+   }).fail(function(errors){
+      console.log(errors);
+   });
 }
 
 $( document ).ready(function() {
-   if(USER_NAME != 'community'){
+   if(display == 'all'){
       $(".btn").css('display', 'none');
    }
-   
+
    update_event_list();
 
    $("#create_event").click(function(){
@@ -138,6 +150,13 @@ $( document ).ready(function() {
          console.log(error);
       });
    });
+
+   $(document).on('click','.delete_event', function(e){
+      var id = $(this).parent().attr('id').split("_")[1];
+      alert($(this).attr('data-url'));
+      delete_event($(this).attr('data-url'));
+   });
+
 });
 </script>
 
