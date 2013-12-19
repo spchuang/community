@@ -40,7 +40,7 @@ class Event(db.Model):
       return {
          'id'           : self.id,
          'name'         : self.name,
-         'creator'      : self.created_by,
+         'host'         : self.created_by,
          'start'        : self.start_on,
          'end'          : self.end_on,
          'description'  : self.description,
