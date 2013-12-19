@@ -202,8 +202,8 @@ class Post(db.Model):
          'id'           : self.id,
          'community_id' : self.community_id,
          'body'         : self.body,
-         'created'      : dump_datetime(self.created),
-         'modified'     : dump_datetime(self.modified),
+         'created_on'   : dump_datetime(self.created_on),
+         'modified_on'  : dump_datetime(self.modified_on),
          'user'         : self.user.serialize
       }
 
@@ -262,7 +262,7 @@ def get_wall_posts(c_id):
             .join(User)\
             .options(db.joinedload(Post.comments))\
             .filter(Post.community_id== c_id, Post.parent_id==None)\
-            .order_by(Post.created.desc())
+            .order_by(Post.created_on.desc())
 
    return query
 
@@ -274,7 +274,7 @@ def get_post_comments(p_id):
             .join(User)\
             .options(db.joinedload(Post.comments))\
             .filter(Post.community_id== c_id, Post.parent_id==None)\
-            .order_by(Post.created.desc())
+            .order_by(Post.created_on.desc())
 
    return query
 
