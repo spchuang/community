@@ -21,7 +21,6 @@ user_community = db.Table('user_community',
    db.UniqueConstraint('user_id', 'community_id')
 )
 
-#possibly add in user id, for event creator
 class Event(db.Model):
    __tablename__ = "event"
    id            = db.Column(db.Integer, primary_key = True)
@@ -34,6 +33,18 @@ class Event(db.Model):
    modified_by   = db.Column(db.Integer, db.ForeignKey('user.id'))
    modified_on   = db.Column(db.DateTime, nullable=False, default = datetime.utcnow, onupdate=datetime.utcnow)
    description   = db.Column(db.Text)
+
+   @property
+   def serialize(self):
+      """Return object data in easily serializeable format"""
+      return {
+         'id'           : self.id,
+         'name'         : self.name,
+         'host'         : self.created_by,
+         'start'        : self.start_on,
+         'end'          : self.end_on,
+         'description'  : self.description,
+      }
 
    def __repr__(self):
       return '<Event %r %r>' % (self.id, self.name)
@@ -278,19 +289,19 @@ def get_post_comments(p_id):
 
    return query
 
-#used to return events for a specific user
 def get_event_list(user):
    subq_communities = db.session.query(
-                        user_community,
-                       )\
-                       .filter(user_community.c.user_id==user.id)\
-                       .subquery()
-
+                       user_community,
+                      )\
+                      .filter(user_community.c.user_id==user.id)\
+                      .subquery()
+   
    query = db.session.query(
-               Event,
-               subq_communities
-            )\
-            .filter(Event.community_id==subq_communities.c.community_id)\
-            .order_by(Event.date.asc())
+           Event,
+           subq_communities
+           )\
+           .filter(Event.community_id==subq_communities.c.community_id)\
+           .order_by(Event.start_on.asc())
+
    return query
 

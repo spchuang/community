@@ -27,10 +27,12 @@ def wall():
 @login_required
 def calendar():
    c_id = request.args.get('c_id')
-   type = request.args.get('get') or 'community'
-   c = Community().query.filter_by(id=c_id).first()
    form = CreateEventForm()
-   return render_template('community/community_calendar.html', community=c, form=form, type=type)
+   if c_id == 'all':
+      c = {'id': 'all'}
+   else:
+      c = Community().query.filter_by(id=c_id).first()
+   return render_template('community/community_calendar.html', community=c, form=form)
 
 @mod.route('/list', methods=['GET'])
 @login_required

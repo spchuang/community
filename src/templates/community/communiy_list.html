@@ -7,7 +7,7 @@
    <div class="col-md-3">
       <h4><a href="{{url_for('community_page.list', get='public')}}">Public Communities</a></h4>
       <h4><a href="{{url_for('community_page.list', get=g.user.user_name)}}">My Communities</a></h4>
-      <h4><a href="{{url_for('community_page.calendar', get=g.user.user_name)}}">My Events</a></h4>
+      <h4><a href="{{url_for('community_page.calendar', c_id='all')}}">My Events</a></h4>
    </div>
    
    <div id="right_col" class="col-md-9">
@@ -106,7 +106,6 @@ function refresh_community_list(){
 }
 
 function join_community(url){
-
    $.ajax({
       type: 'POST',
       url: url,
