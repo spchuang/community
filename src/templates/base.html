@@ -5,23 +5,21 @@
    <meta name="csrf-token" content="{{ csrf_token() }}">
 	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
 	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="{{ url_for('static', filename='vendors/bootstrap/3.0.2/bootstrap.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='script/vendors/bootstrap/3.0.2/bootstrap.min.css') }}">
 
 
-	<link rel="stylesheet" href="{{ url_for('static', filename='vendors/bootstrap/3.0.2/bootstrap-theme.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='script/vendors/bootstrap/3.0.2/bootstrap-theme.min.css') }}">
    <!--
-   <script src="{{ url_for('static', filename='vendors/jquery/1.9.1/jquery.min.js') }}"></script>
-   <script src="{{ url_for('static', filename='vendors/bootstrap/3.0.2/bootstrap.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='script/vendors/jquery/1.9.1/jquery.min.js') }}"></script>
+   
+   <script src="{{ url_for('static', filename='script/vendors/bootstrap/3.0.2/bootstrap.min.js') }}"></script>
    <script src="http://getbootstrap.com/docs-assets/js/holder.js"></script>
    <script type=text/javascript>
       $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
    </script>
-   !-->
 
-    <!--handlebar!-->
-    <!--
-    <script src="{{ url_for('static', filename='vendors/handlebars-v1.1.2.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendors/jquery.timeago.js') }}"></script>
+    <script src="{{ url_for('static', filename='script/vendors/handlebars-v1.1.2.js') }}"></script>
+    <script src="{{ url_for('static', filename='script/vendors/jquery.timeago.js') }}"></script>
       <script type=text/javascript>
       Handlebars.registerHelper('if_eq', function(a, b, opts) {
          if(a == b){ // Or === depending on your needs
@@ -43,7 +41,7 @@
       })
 
     </script>
-    !-->
+  !-->
 	</head>
 
 <body>

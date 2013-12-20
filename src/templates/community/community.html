@@ -175,15 +175,17 @@ $( document ).ready(function() {
 
 });
 */
+
 </script>
-<!-- Placed requireJS at the end of the document so the pages load faster -->
-<script src="/static/vendors/require.js"></script>
+
+<script src="/static/script/vendors/require.js"></script>
 <script type="text/javascript">
    // Load common code that includes config,
    // then load the app logic for this page.
    require(['/static/script/common.js'], function (common) {
-
-      require(['/static/script/app/wall.js']);
+      require(['/static/script/app/wall/wallView.js'],function(wall){
+         new wall();
+      });
    });
    
   
