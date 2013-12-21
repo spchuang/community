@@ -108,7 +108,7 @@ var postTemplate = Handlebars.compile(source);
 Handlebars.registerPartial("comments", $("#comments-partial").html());
 
 function update_wall(){
-   $.get('{{ url_for('wall.posts', c_id=community.id) }}')
+   $.get('{{ url_for('wall.get_posts', c_id=community.id) }}')
       .done(function(result){
          if(result.success){
          console.log(result.data);
@@ -180,11 +180,13 @@ $( document ).ready(function() {
 
 <script src="/static/script/vendors/require.js"></script>
 <script type="text/javascript">
+   //define community id here
+   var COMMUNITY_ID = {{community.id}};
    // Load common code that includes config,
    // then load the app logic for this page.
    require(['/static/script/common.js'], function (common) {
       require(['/static/script/app/wall/wallView.js'],function(wall){
-         new wall();
+         new wall({communityId: COMMUNITY_ID});
       });
    });
    

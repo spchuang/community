@@ -28,3 +28,17 @@ requirejs.config({
     urlArgs: "bust=" + (new Date()).getTime(), //remove cache
     
 });
+
+//include csrf token to Backone in global scope
+define(['backbone'], function(Backbone){
+   var csrftoken = $('meta[name=csrf-token]').attr('content');
+   var oldSync = Backbone.sync;
+   Backbone.sync = function(method, model, options){
+      options.beforeSend =  function(xhr, settings) {
+         if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+         }
+       }
+      return oldSync(method, model, options);
+   };
+});

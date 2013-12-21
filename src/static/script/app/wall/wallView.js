@@ -86,7 +86,7 @@ define('wallPostItem', function(require){
                url: this.commentForm.attr('action'),
                wait: true,
                success : function(newComment){
-             
+                 
                   that.comments.add(newComment);
                }
             }
@@ -114,12 +114,12 @@ define(function (require) {
       events:{
          'click #create_post' : 'createPost' 
       },
-      initialize: function(){
+      initialize: function(options){
          this.$content     = this.$("#wall_content");
          this.createForm   = this.$("#create_form");
    
          //create a collection of posts   
-         this.posts =  new models.PostCollection();  
+         this.posts =  new models.PostCollection({communityId: options.communityId});  
          
          this.listenTo(this.posts, 'reset', this.render);
          this.listenTo(this.posts, 'add', this.addOne);
@@ -148,6 +148,7 @@ define(function (require) {
                url: this.createForm.attr('action'), 
                wait: true,
                success : function(newPost){
+                   console.log(newPost);
                   that.posts.add(newPost);
                }
             }

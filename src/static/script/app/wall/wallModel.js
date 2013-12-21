@@ -2,16 +2,7 @@ define(function (require) {
    var $         = require('jquery'),
        Backbone  = require('backbone');
        
-   var csrftoken = $('meta[name=csrf-token]').attr('content');
-   var oldSync = Backbone.sync;
-   Backbone.sync = function(method, model, options){
-      options.beforeSend =  function(xhr, settings) {
-         if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-         }
-       }
-      return oldSync(method, model, options);
-   };
+   
    
    var PostComment = Backbone.Model.extend({
       parse: function(response, options){
@@ -51,9 +42,13 @@ define(function (require) {
        
   
    var PostCollection = Backbone.Collection.extend({
-      
+      initialize: function(options){
+         this.communityId = options.communityId;
+      },
       model: Post,
-      url: "http://localhost:5000/api/wall/posts?c_id=1",
+      url: function(){
+         return 'http://localhost:5000/api/community/'+this.communityId+'/wall/posts';
+      },
       parse: function(response) {
          return response.data;
       }
