@@ -8,6 +8,9 @@ define(function (require) {
  
    var EventCollection = Backbone.Collection.extend({
    	  model: Event,
+   	  initialize: function(options){
+         this.communityId = options.communityId;
+      },
       url: function(){
       	return 'http://localhost:5000/api/calendar/list?c_id='+this.communityId;
       },

@@ -28,7 +28,7 @@ requirejs.config({
          exports: 'Handlebars'
       },
       fullcalendar: {
-         deps: ["underscore", "jquery", "jquery_ui"]
+         deps: ["jquery", "jquery_ui"],
          exports: 'fullcalendar'
       }
     },
