@@ -2,6 +2,13 @@
 {% block body %}
 {% from "helper/formhelpers.html" import render_input_field%}
 
+<link rel="stylesheet" href="{{ url_for('static', filename='vendors/fullcalendar/1.6.4/fullcalendar.css') }}">
+
+<script src="{{ url_for('static', filename='vendors/jquery-ui.custom.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendors/underscore-1.5.2.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendors/backbone-1.1.0.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendors/fullcalendar/1.6.4/fullcalendar.js') }}"></script>
+
 <div class="container">
    <div class="col-md-3">
 
@@ -9,12 +16,9 @@
    
    <div id="right_col" class="col-md-9">
       <div class="row">
-         {% if community.id == 'all' %}
-            My Events
-         {% else %}
-            Community Events
-         {% endif %}
+         
          <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createEventModal">Add Event</button>
+         
       </div>
       
       <div class="row" id="event_list_content">
@@ -22,6 +26,7 @@
       </div>
 	</div>
 </div>
+
 
 <div class="modal fade" id="createEventModal" tabindex="-1" role="dialog" aria-labelledby="createEventModal" aria-hidden="true">
    <div class="modal-dialog">
@@ -95,6 +100,7 @@
    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<!--
 <script id="event-list-template" type="text/x-handlebars-template">
 {% raw %}
    {{#if this}}
@@ -103,8 +109,8 @@
       {{#each this}}
       <li id="event_{{id}}">
          {{id}}
-         {{name}}  
-         {{description}}
+         {{title}}  
+         {{start}}
          <button class="delete_event btn btn-info pull-right" data-url="{{action.delete}}">
             Delete
          </button>
@@ -120,7 +126,116 @@
    {{/if}}
 {% endraw %}
 </script>
+-->
 
+<script type=text/javascript>
+$(function(){
+
+    var Event = Backbone.Model.extend();
+ 
+    var Events = Backbone.Collection.extend({
+        model: Event,
+        url: '{{ url_for('calendar.list', c_id=community.id) }}',
+
+        parse: function(response){
+            return response.data;
+        }
+    });
+ 
+    var EventsView = Backbone.View.extend({
+        initialize: function(){
+            _.bindAll.apply(_, [this].concat(_.functions(this)))
+ 
+            this.collection.bind('reset', this.addAll);
+            this.collection.bind('add', this.addOne);
+            this.collection.bind('change', this.change);
+            this.collection.fetch();
+        },
+        render: function() {
+            this.$el.fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay',
+                    ignoreTimezone: false
+                },
+                selectable: true,
+                selectHelper: true,
+                editable: true,
+                allDayDefault: false,
+                select: this.select,
+                eventClick: this.eventClick,
+                eventDrop: this.eventDropOrResize,
+                eventResize: this.eventDropOrResize
+            });
+        },
+        addAll: function(){
+            this.$el.fullCalendar('addEventSource', this.collection.toJSON());
+        },
+        select: function(startDate, endDate) {
+            var eventView = new EventView();
+            eventView.collection = this.collection;
+            eventView.model = new Event({start: startDate, end: endDate});
+            eventView.render();
+            
+        },
+        addOne: function(event) {
+            this.$el.fullCalendar('renderEvent', event.toJSON());
+        },
+        change: function(event) {
+            var fcEvent = this.$el.fullCalendar('clientEvents', event.get('id'))[0];
+            fcEvent.title = event.get('title');
+            fcEvent.color = event.get('color');
+            this.$el.fullCalendar('updateEvent', fcEvent);
+        }, 
+        eventClick: function(fcEvent) {
+            this.eventView.model = this.collection.get(fcEvent.id);
+            this.eventView.render();
+        },
+        eventDropOrResize: function(fcEvent) {
+            this.collection.get(fcEvent.id).save({start: fcEvent.start, end: fcEvent.end});
+            alert(JSON.stringify(fcEvent));
+        }
+    });
+ 
+    var EventView = Backbone.View.extend({
+        el: $('#eventDialog'),
+        initialize: function() {
+            _.bindAll.apply(_, [this].concat(_.functions(this)))
+        },
+        render: function() {
+            this.$el.dialog({
+                modal: true,
+                title: (this.model.isNew() ? 'New' : 'Edit') + ' Event',
+                buttons: {'Ok': this.save, 'Cancel': this.close},
+                open: this.open
+            });
+ 
+            return this;
+        },
+        open: function() {
+            this.$('#title').val(this.model.get('title'));
+            this.$('#color').val(this.model.get('color'));
+        },
+        save: function() {
+            this.model.set({'title': this.$('#title').val(), 'color': this.$('#color').val()});
+            if (this.model.isNew()){
+                this.collection.create(this.model, {success: this.close});
+            }else{
+                this.model.save({}, {success: this.close});
+            }
+        },
+        close: function() {
+           this.$el.dialog('close');
+        }
+    });
+
+    var events = new Events();
+    new EventsView({el: $("#event_list_content"), collection: events}).render();
+});
+</script>
+
+<!--
 <script type=text/javascript>
 var display = '{{community.id}}';
 var source   = $("#event-list-template").html();
@@ -231,5 +346,6 @@ $( document ).ready(function() {
 
 });
 </script>
+-->
 
 {% endblock %}

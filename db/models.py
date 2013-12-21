@@ -39,15 +39,18 @@ class Event(db.Model):
       """Return object data in easily serializeable format"""
       return {
          'id'           : self.id,
-         'name'         : self.name,
+         #had to change to 'title' for full calendar, might change
+         'title'        : self.name,
          'host'         : self.created_by,
-         'start'        : self.start_on,
-         'end'          : self.end_on,
+         'start'        : self.start_on.isoformat(),
+         'end'          : self.end_on.isoformat(),
          'description'  : self.description,
+         'color'        : 'blue',
       }
 
    def __repr__(self):
       return '<Event %r %r>' % (self.id, self.name)
+
 
 class User(db.Model):
    __tablename__ = "user"
