@@ -9,6 +9,7 @@
 define('wallPostCommentItem', function(require){
    var Backbone      = require('backbone'),
        Handlebars    = require('handlebars'),
+       timeago       = require('timeago'),
        tpl           = require('text!app/wall/wallPostCommentItem.html');
 
    var ItemView = Backbone.View.extend({
@@ -20,6 +21,8 @@ define('wallPostCommentItem', function(require){
       
       render: function() {
          this.$el.html(this.template(this.model.toJSON()));
+         //apply time ago
+         this.$el.find(".comment_time").timeago();
          return this;
       },
       likeEvt: function(event){
@@ -34,6 +37,7 @@ define('wallPostCommentItem', function(require){
 define('wallPostItem', function(require){
    var Backbone      = require('backbone'),
        Handlebars    = require('handlebars'),
+       timeago       = require('timeago'),
        tpl           = require('text!app/wall/wallPostItem.html'),
        commentView   = require('wallPostCommentItem');
 
@@ -58,6 +62,9 @@ define('wallPostItem', function(require){
          
          this.commentForm = this.$("#comment_form");
          this.comments.each(this.addComment, this);   
+         
+         //apply time ago
+         this.$el.find(".post_time").timeago();
 
          return this;
       },

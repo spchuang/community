@@ -10,7 +10,8 @@ requirejs.config({
         //backbone:    'http://documentcloud.github.com/backbone/backbone-min.js',
         //underscore:  'http://documentcloud.github.com/underscore/underscore-min.js'
         backbone:    'backbone-1.1.0.min',
-        underscore:  'underscore-1.5.2.min'    
+        underscore:  'underscore-1.5.2.min',
+        timeago:     'jquery.timeago'
    },
     shim: {
       underscore: {
