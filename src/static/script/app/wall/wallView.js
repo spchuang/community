@@ -1,8 +1,7 @@
 /*
    Let's put everything in the same file first...
    TODO:
-      1. add comments
-      2. create post return new post
+
       3. create comments return new comments
       4. comment list
 */
@@ -23,7 +22,8 @@ define('wallPostCommentItem', function(require){
          this.$el.html(this.template(this.model.toJSON()));
          return this;
       },
-      likeEvt: function(){
+      likeEvt: function(event){
+         event.stopPropagation();
          console.log("like clicked");
       }
    });
@@ -79,6 +79,7 @@ define('wallPostItem', function(require){
                url: this.commentForm.attr('action'),
                wait: true,
                success : function(newComment){
+             
                   that.comments.add(newComment);
                }
             }

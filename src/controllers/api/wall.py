@@ -67,10 +67,10 @@ def comment_post():
 
    commentForm = WallPostCommentForm()
    if commentForm.validate_on_submit():
-      new_post = Post(body = commentForm.body.data, user_id=g.user.id)
+      new_comment = Post(body = commentForm.body.data, user_id=g.user.id)
       p = Post().query.filter_by(id=p_id).first()
-      p.comment(new_post)
+      p.comment(new_comment)
       db.session.add(p)
       db.session.commit()
-      return jsonify(success = True)
+      return jsonify(success = True, data=new_comment.serialize)
    return jsonify(success = False, errors = commentForm.errors)

@@ -14,38 +14,51 @@ define(function (require) {
    };
    
    var PostComment = Backbone.Model.extend({
-
+      parse: function(response, options){
+         var item;
+         if (options.collection){
+            item = response;
+         }else{
+            item = response.data;
+         }
+         return item;
+      }
    });
    
    var PostCommentCollection = Backbone.Collection.extend({
       model: PostComment,
-      url: 'http://localhost:5000/api/wall/'
+      url: 'http://localhost:5000/api/wall/',
+      parse: function(response) {
+         return response.data;
+      }
    });
        
    var Post  = Backbone.Model.extend({
-         parse: function(response, options){
-            var item;
-            if (options.collection){
-               item = response;
-            }else{
-               item = response.data;
-            }
-            item.comments = new PostCommentCollection(item.comments);
-            return item;
+      initialize:function(){
+      
+      },
+      parse: function(response, options){
+         var item;
+         if (options.collection){
+            item = response;
+         }else{
+            item = response.data;
          }
-       });
+         item.comments = new PostCommentCollection(item.comments);
+         return item;
+      }
+   });
        
   
    var PostCollection = Backbone.Collection.extend({
       
-         model: Post,
-         
-         url: "http://localhost:5000/api/wall/posts?c_id=1",
-         parse: function(response) {
-            return response.data;
-         }
-    
-      });
+      model: Post,
+      url: "http://localhost:5000/api/wall/posts?c_id=1",
+      parse: function(response) {
+         return response.data;
+      }
+ 
+   });
 
     return {
         Post: Post,
