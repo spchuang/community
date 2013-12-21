@@ -3,15 +3,18 @@ requirejs.config({
     baseUrl: '/static/script/vendors/',
     paths: {
     
-        app:         '../app',
-        jquery:      'jquery/1.9.1/jquery.min',
+        app:          '../app',
+        jquery:       'jquery/1.9.1/jquery.min',
         //jquery:      'https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',
-        handlebars:  'handlebars-v1.1.2',
+        handlebars:   'handlebars-v1.1.2',
         //backbone:    'http://documentcloud.github.com/backbone/backbone-min.js',
         //underscore:  'http://documentcloud.github.com/underscore/underscore-min.js'
-        backbone:    'backbone-1.1.0.min',
-        underscore:  'underscore-1.5.2.min',
-        timeago:     'jquery.timeago'
+        backbone:     'backbone-1.1.0.min',
+        underscore:   'underscore-1.5.2.min',
+        timeago:      'jquery.timeago',
+        jquery_ui:    'jquery-ui.custom.min',
+        fullcalendar: 'fullcalendar/1.6.4/fullcalendar'
+
    },
     shim: {
       underscore: {
@@ -24,6 +27,10 @@ requirejs.config({
       handlebars: {
          exports: 'Handlebars'
       },
+      fullcalendar: {
+         deps: ["underscore", "jquery", "jquery_ui"]
+         exports: 'fullcalendar'
+      }
     },
     urlArgs: "bust=" + (new Date()).getTime(), //remove cache
     
