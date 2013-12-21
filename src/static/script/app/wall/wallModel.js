@@ -19,17 +19,23 @@ define(function (require) {
    
    var PostCommentCollection = Backbone.Collection.extend({
       model: PostComment,
+      url: 'http://localhost:5000/api/wall/'
    });
        
    var Post  = Backbone.Model.extend({
-         parse: function(response){
-            response.comments = new PostCommentCollection(response.comments);
-            return response;
+         parse: function(response, options){
+            var item;
+            if (options.collection){
+               item = response;
+            }else{
+               item = response.data;
+            }
+            item.comments = new PostCommentCollection(item.comments);
+            return item;
          }
        });
        
   
-
    var PostCollection = Backbone.Collection.extend({
       
          model: Post,

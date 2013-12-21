@@ -28,7 +28,7 @@ def posts():
    return jsonify(success = True, data= map(merge_posts, posts))
 
 
-@api.route('/new_post', methods=['POST'])
+@api.route('/posts', methods=['POST'])
 @login_required
 def new_post():
    c_id = request.args.get('c_id')
@@ -37,12 +37,20 @@ def new_post():
 
    postForm = CreateWallPostForm()
    if postForm.validate_on_submit():
-      new_post = Post(body = postForm.body.data, user_id=g.user.id)
+      p = Post(body = postForm.body.data, user_id=g.user.id)
       c = Community().query.filter_by(id=c_id).first()
-      c.create_post(new_post)
+      c.create_post(p)
       db.session.add(c)
       db.session.commit()
-      return jsonify(success = True)
+      
+      #return new model
+      new_post = p.serialize
+      new_post['action'] = {
+         'comment' :url_for('wall.comment_post', c_id=c_id, p_id=p.id)
+      }
+      new_post['comments'] = []
+      
+      return jsonify(success = True, data=new_post)
 
    return jsonify(success = False, errors = postForm.errors)
 

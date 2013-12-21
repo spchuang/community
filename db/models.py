@@ -11,7 +11,6 @@ NOT_COMMENT = -1
 
 #see http://stackoverflow.com/questions/7102754/jsonify-a-sqlalchemy-result-set-in-flask
 def dump_datetime(value):
-   print value
    if value is None:
       return None
    return value.strftime("%Y-%m-%d") +"T"+ value.strftime("%H:%M:%S")+"Z"

@@ -18,16 +18,9 @@ define('wallPostCommentItem', function(require){
       events: {
          'click .like'     : 'likeEvt',
       },
-      initialize: function() {
-         this.listenTo(this.model, 'change', this.render);
-      },
       
       render: function() {
-         console.log(this.model.toJSON());
-         var $oldel = this.$el
-             $newel = $(this.template(this.model.toJSON()));
-         this.setElement($newel);
-         $oldel.replaceWith($newel);
+         this.$el.html(this.template(this.model.toJSON()));
          return this;
       },
       likeEvt: function(){
@@ -50,12 +43,11 @@ define('wallPostItem', function(require){
       events: {
          'click .like'     : 'likeEvt',
          'click .comment'  : 'commentEvt',
-         'click #comment_post' : 'makeComment',
+         'click #comment_post' : 'commentPost',
       },
       initialize: function() {
          this.comments = this.model.get('comments');
-         this.listenTo(this.model, 'change', this.render);
-         this.form = this.$("#comment_form");
+         this.listenTo(this.comments, 'add', this.addComment);
       },
       
       render: function() {
@@ -64,13 +56,13 @@ define('wallPostItem', function(require){
          this.setElement($newel);
          $oldel.replaceWith($newel);
          
+         this.commentForm = this.$("#comment_form");
          this.comments.each(this.addComment, this);   
 
          return this;
       },
       addComment: function(comment){
          var view = new commentView({ model: comment });
-        
          this.$el.find('.comments_list').append( view.render().el );
       },
       likeEvt: function(){
@@ -79,8 +71,18 @@ define('wallPostItem', function(require){
       commentEvt: function(){
          console.log("comment clicked");
       },
-      makeComment: function(){
-         
+      commentPost: function(){
+         var that = this;
+         this.comments.create(
+            {body: this.commentForm.find('input').val()}, 
+            {
+               url: this.commentForm.attr('action'),
+               wait: true,
+               success : function(newComment){
+                  that.comments.add(newComment);
+               }
+            }
+         );
       }
    });
    return ItemView;
@@ -105,38 +107,46 @@ define(function (require) {
          'click #create_post' : 'createPost' 
       },
       initialize: function(){
-         this.content = this.$("#wall_content");
-         this.createForm  = this.$("#create_form");
+         this.$content     = this.$("#wall_content");
+         this.createForm   = this.$("#create_form");
    
          //create a collection of posts   
          this.posts =  new models.PostCollection();  
          
-         this.posts.on('reset', this.addAll, this);
+         this.listenTo(this.posts, 'reset', this.render);
+         this.listenTo(this.posts, 'add', this.addOne);
          //get list of wall posts
          this.posts.fetch({reset: true});
          
       },
       render: function() {
-         
+         this.addAll();
+         return this;
       },
       addOne: function( post ) {
          var view = new postView({ model: post });
-         this.$el.append( view.render().el );
+         this.$content.prepend( view.render().el );
       },
       
       addAll: function() {
-         this.posts.each(this.addOne, this);
+         //print reversely
+         _.each(this.posts.last(this.posts.length).reverse(), this.addOne, this);
       },
       createPost: function(){
-         
+         var that = this
          this.posts.create(
-            {body: this.createForm.find('input').val()}, 
-            {url: this.createForm.attr('action')}
+            {body: this.createForm.find('input[name="body"]').val()}, 
+            {
+               url: this.createForm.attr('action'), 
+               wait: true,
+               success : function(newPost){
+                  that.posts.add(newPost);
+               }
+            }
          );
+
       }
 
    });
    return WallView;
-      
-
 });
