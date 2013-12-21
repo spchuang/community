@@ -13,7 +13,8 @@ requirejs.config({
         underscore:   'underscore-1.5.2.min',
         timeago:      'jquery.timeago',
         jquery_ui:    'jquery-ui.custom.min',
-        fullcalendar: 'fullcalendar/1.6.4/fullcalendar'
+        fullcalendar: 'fullcalendar/1.6.4/fullcalendar',
+        bootstrap:    'bootstrap/3.0.2/bootstrap.min'
 
    },
     shim: {
@@ -30,7 +31,14 @@ requirejs.config({
       fullcalendar: {
          deps: ["jquery", "jquery_ui"],
          exports: 'fullcalendar'
+      },
+      jquery_ui: {
+         deps: ['jquery'],
+      },
+      bootstrap: {
+         deps: ["jquery"]
       }
+      
     },
     urlArgs: "bust=" + (new Date()).getTime(), //remove cache
     

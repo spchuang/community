@@ -21,8 +21,8 @@
       <div class="row">
          
          <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createEventModal">Add Event</button>
-         
       </div>
+      <div id='calendar'></div>
       
       <div class="row" id="event_list_content">
 
@@ -40,7 +40,6 @@
          </div>
          <div class="modal-body">
             <form id="create_form" action="{{ url_for('calendar.new_event', c_id=community.id) }}"  method=post>
-               {{ form.csrf_token }}
                <div class="form-group">
                   <label>Name</label>
                    {{ render_input_field(form.name, "Event Name") }}
@@ -76,7 +75,6 @@
          </div>
          <div class="modal-body">
             <form id="update_form" action="{{ url_for('calendar.update_event', e_id=11) }}"  method=post>
-               {{ form.csrf_token }}
                <div class="form-group">
                   <label>Name</label>
                    {{ render_input_field(form.name, "Event Name") }}
@@ -132,7 +130,7 @@
 -->
 
 <script src="/static/script/vendors/require.js"></script>
-<script type=text/javascript>
+<script type="text/javascript">
    //define community id here
    var COMMUNITY_ID = '{{community.id}}';
    // Load common code that includes config,
