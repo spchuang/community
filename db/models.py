@@ -212,14 +212,18 @@ class Post(db.Model):
    @property
    def serialize(self):
       """Return object data in easily serializeable format"""
-      return {
+      s = {
          'id'           : self.id,
          'community_id' : self.community_id,
          'body'         : self.body,
+         
          'created_on'   : dump_datetime(self.created_on),
          'modified_on'  : dump_datetime(self.modified_on),
          'user'         : self.user.serialize
       }
+      if self.parent_id is not None:
+         s['parent_id'] = self.parent_id
+      return s
 
    def __repr__(self):
       return '<Post %r>' % (self.id)

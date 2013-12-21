@@ -1,0 +1,36 @@
+<div class="post well well-sm" id="{{id}}">
+   <div class="post_head">
+
+      <div class="user_avatar pull-left" >
+
+      </div>
+      <div class="post_meta pull-right" >
+         <div class="post_user">{{user.first_name}} {{user.last_name}}</div>
+         <div class="post_time" title="{{created_on}}"></div>
+      </div>
+   </div>
+   <div class="post_content">
+      {{body}}
+   </div>
+
+   <div class="post_action">
+      <span class='like'>Like</span> . 
+      <span class='comment'>Comment</span>
+   </div>
+   <div class="comments_container">
+      <ul class="comments_list">
+      
+      </ul>
+      
+      <div class="comment_action">
+         <form id="comment_form" action="{{action.comment}}"  method=post>
+            <div >
+               <input type="text" name='body'  value=""  class="form-control" placeholder="Write a comment">
+            </div>
+            <button id="comment_post" class="btn btn-primary" type="button">Comment</button>
+         </form>
+      </div>
+
+   </div>
+
+</div>

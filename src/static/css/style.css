@@ -148,6 +148,11 @@ body {
    height: 20px;
    line-height: 20px;
 }
+.post .like, .post .comment{
+   cursor:pointer;
+   color:blue;
+   text-decoration:underline;
+}
 
 .post .post_content{
    margin-top: 10px;
