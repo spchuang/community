@@ -284,7 +284,6 @@ def get_wall_posts(c_id):
 
    return query
 
-#just wondering what is the purpose of passing p_id here?
 def get_post_comments(p_id):
    query = db.session.query(
                Post,

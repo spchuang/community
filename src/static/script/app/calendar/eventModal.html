@@ -1,15 +1,37 @@
 <div class="modal-dialog">
-  <div class="modal-content">
-    <div class="modal-header">
+	<div class="modal-content">
+   <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h4 class="modal-title">Modal title</h4>
-    </div>
-    <div class="modal-body">
-      ...
-    </div>
-    <div class="modal-footer">
-      <a href="#" class="btn">Close</a>
-      <a href="#" class="btn btn-primary">Save changes</a>
-    </div>
-  </div><!-- /.modal-content -->
+      <h4>{{title}}</h4>
+   </div>
+   <div class="modal-body">
+      <form id="create_form">
+      	<div class="form-group">
+         	<label>Name</label>
+         	<input type="text" name='name'  value="{{data.name}}"  class="form-control" placeholder="Event Name">
+         </div>
+        	<div class="form-group">
+         	<label>Starts</label>
+         	<input type="text" name='start'  value="{{data.start}}"  class="form-control" placeholder="Start Date and Time">
+        	</div>
+         <div class="form-group">
+            <label>Ends</label>
+            <input type="text" name='end'  value="{{data.end}}"  class="form-control" placeholder="End Date and Time">
+         </div>              
+         <div class="form-group">
+            <label>Description</label>
+            <input type="text" name='description'  value="{{data.description}}"  class="form-control" placeholder="Event Description">
+         </div>
+      </form>
+   </div>
+   <div class="modal-footer">
+   	{{#if exists}}
+   	<a href="#" class="btn btn-primary edit">Edit</a>
+   	<a href="#" class="btn btn-danger delete">Delete</a>
+   	{{else}}
+		<a href="#" class="btn btn-primary ok">Create</a>
+   	{{/if}}
+      <a href="#" class="btn btn-default cancel">Cancel</a>
+   </div>
+   </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->

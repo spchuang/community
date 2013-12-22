@@ -14,6 +14,7 @@ requirejs.config({
         timeago:      'jquery.timeago',
         jquery_ui:    'jquery-ui.custom.min',
         fullcalendar: 'fullcalendar/1.6.4/fullcalendar',
+        sugar: 		 'sugar.min',
         bootstrap:    'bootstrap/3.0.2/bootstrap.min'
 
    },

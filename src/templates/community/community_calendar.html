@@ -4,14 +4,6 @@
 
 <link rel="stylesheet" href="{{ url_for('static', filename='script/vendors/fullcalendar/1.6.4/fullcalendar.css') }}">
 
-<!--
-<script src="{{ url_for('static', filename='script/vendors/jquery/1.9.1/jquery.min.js') }}"></script>
-<script src="{{ url_for('static', filename='script/vendors/jquery-ui.custom.min.js') }}"></script>
-<script src="{{ url_for('static', filename='script/vendors/underscore-1.5.2.min.js') }}"></script>
-<script src="{{ url_for('static', filename='script/vendors/backbone-1.1.0.min.js') }}"></script>
-<script src="{{ url_for('static', filename='script/vendors/fullcalendar/1.6.4/fullcalendar.js') }}"></script>
--->
-
 <div class="container">
    <div class="col-md-3">
 
@@ -20,114 +12,11 @@
    <div id="right_col" class="col-md-9">
       <div class="row">
          
-         <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createEventModal">Add Event</button>
       </div>
       <div id='calendar'></div>
       
-      <div class="row" id="event_list_content">
-
-      </div>
 	</div>
 </div>
-
-
-<div class="modal fade" id="createEventModal" tabindex="-1" role="dialog" aria-labelledby="createEventModal" aria-hidden="true">
-   <div class="modal-dialog">
-      <div class="modal-content">
-         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="myModalLabel">Add New Event</h4>
-         </div>
-         <div class="modal-body">
-            <form id="create_form" action="{{ url_for('calendar.new_event', c_id=community.id) }}"  method=post>
-               <div class="form-group">
-                  <label>Name</label>
-                   {{ render_input_field(form.name, "Event Name") }}
-               </div>
-               <div class="form-group">
-                  <label>Starts</label>
-                   {{ render_input_field(form.start, "Start Date and Time")}}
-               </div>
-               <div class="form-group">
-                  <label>Ends</label>
-                   {{ render_input_field(form.end, "End Date and Time")}}
-               </div>              
-               <div class="form-group">
-                  <label>Description</label>
-                  {{ render_input_field(form.description, "Event Description") }}
-               </div>
-            </form>
-         </div>
-         <div class="modal-footer">
-            <button id="create_event" type="button" class="btn btn-primary" type="submit">Create</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-         </div>
-      </div><!-- /.modal-content -->
-   </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<div class="modal fade" id="updateEventModal" tabindex="-1" role="dialog" aria-labelledby="updateEventModal" aria-hidden="true">
-   <div class="modal-dialog">
-      <div class="modal-content">
-         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="myModalLabel">Edit Event</h4>
-         </div>
-         <div class="modal-body">
-            <form id="update_form" action="{{ url_for('calendar.update_event', e_id=11) }}"  method=post>
-               <div class="form-group">
-                  <label>Name</label>
-                   {{ render_input_field(form.name, "Event Name") }}
-               </div>
-               <div class="form-group">
-                  <label>Starts</label>
-                   {{ render_input_field(form.start, "Start Date and Time")}}
-               </div>
-               <div class="form-group">
-                  <label>Ends</label>
-                   {{ render_input_field(form.end, "End Date and Time")}}
-               </div>              
-               <div class="form-group">
-                  <label>Description</label>
-                  {{ render_input_field(form.description, "Event Description") }}
-               </div>
-            </form>
-         </div>
-         <div class="modal-footer">
-            <button id="update_event" type="button" class="btn btn-primary" type="submit">Edit</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-         </div>
-      </div><!-- /.modal-content -->
-   </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<!--
-<script id="event-list-template" type="text/x-handlebars-template">
-{% raw %}
-   {{#if this}}
-   <ul class="event_items">
-
-      {{#each this}}
-      <li id="event_{{id}}">
-         {{id}}
-         {{title}}  
-         {{start}}
-         <button class="delete_event btn btn-info pull-right" data-url="{{action.delete}}">
-            Delete
-         </button>
-         <button class="update_event btn btn-info pull-right" data-toggle="modal" data-target="#updateEventModal">
-            Update
-         </button>    
-      </li>
-
-      {{/each}}
-   </ul>
-   {{else}}
-      <h3>No scheduled events yet!</h3>
-   {{/if}}
-{% endraw %}
-</script>
--->
 
 <script src="/static/script/vendors/require.js"></script>
 <script type="text/javascript">

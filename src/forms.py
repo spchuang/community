@@ -33,5 +33,5 @@ class WallPostCommentForm(Form):
 class CreateEventForm(Form):
    name = TextField('name', [validators.Required()]) 
    start = DateTimeField('start', [validators.Required()])
-   end = DateTimeField('start', [validators.Required()])
+   end = DateTimeField('end', [validators.Required()])
    description = TextField('description')

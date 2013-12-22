@@ -3,7 +3,18 @@ define(function (require) {
 
        
    var Event  = Backbone.Model.extend({
+      initialize: function(){
 
+      },
+      parse: function(response, options){
+         var item;
+         if (options.collection){
+            item = response;
+         }else{
+            item = response.data;
+         }
+         return item;
+      }
    });
        
   
