@@ -1,0 +1,30 @@
+
+{% extends "base.html" %}
+{% block body %}
+
+<div class="container">
+
+        
+   <div class="col-md-2">
+      this is side panel
+   </div>
+   
+   <div id="right_col" class="col-md-10">
+      <div id="task"></div>
+      
+      
+	</div>
+</div>
+
+<script src="/static/script/vendors/require.js"></script>
+
+<script type="text/javascript">
+   var COMMUNITY_ID = '{{community.id}}';
+   require(['/static/script/common.js'], function (common) {
+      require(['/static/script/app/task/taskView.js'],function(calendar){
+         new calendar({communityId: COMMUNITY_ID});
+      });
+   });
+</script>
+
+{% endblock %}

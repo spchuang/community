@@ -25,6 +25,7 @@ define('calendarEventItem', function(require){
          this.$content = this.$el.find('.modal-body');
       },
       render: function() {
+         console.log(this.model);
          var data = {
             name: this.model.get('title'), 
             start: Date.create(this.model.get('start')).full(), 
@@ -172,6 +173,11 @@ define(function (require) {
       },
       eventClick: function(fcEvent) {
          console.log("CLICK");
+         
+         //To stop event click from firing, remove this later on, to let user update and delete events
+         if(this.evts.communityId == 'all')
+         	return;
+
          this.calendarEvent.model = this.evts.get(fcEvent.id);
          this.calendarEvent.show_delete = true;
          this.calendarEvent.render();

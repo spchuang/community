@@ -31,7 +31,11 @@ class WallPostCommentForm(Form):
    body   = TextField('body',  [validators.Required(),validators.Length(max=1000)])
 
 class CreateEventForm(Form):
-   name = TextField('name', [validators.Required()]) 
-   start = DateTimeField('start', [validators.Required()])
-   end = DateTimeField('end', [validators.Required()])
+   name        = TextField('name', [validators.Required()]) 
+   start       = DateTimeField('start', [validators.Required()])
+   end         = DateTimeField('end', [validators.Required()])
    description = TextField('description')
+   
+class CreateTaskForm(Form):
+   name     = TextField('name', [validators.Required()]) 
+   summary  = TextField('summary')

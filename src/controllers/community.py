@@ -33,6 +33,15 @@ def calendar():
    else:
       c = Community().query.filter_by(id=c_id).first()
    return render_template('community/community_calendar.html', community=c, form=form)
+   
+@mod.route('/task', methods=['GET'])
+@login_required
+def task():
+   c_id = request.args.get('c_id') or abort(404)
+   form = CreateEventForm()
+
+   c = Community().query.filter_by(id=c_id).first()
+   return render_template('community/community_task.html', community=c)
 
 @mod.route('/list', methods=['GET'])
 @login_required
