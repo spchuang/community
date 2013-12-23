@@ -178,16 +178,33 @@ class Task(db.Model):
    __tablename__ = 'task'
    id            = db.Column(db.Integer, primary_key = True)
    name          = db.Column(db.String(60), nullable=False)
-   assigned_to   = db.Column(db.Integer, db.ForeignKey('user.id'))
-   assigned_by   = db.Column(db.Integer, db.ForeignKey('user.id'))
-   Summary       = db.Column(db.String(1000), nullable=False)
-   Description   = db.Column(db.String(1000), nullable=False)
+   assigned_to   = db.Column(db.Integer, db.ForeignKey('user.id'), default=None)
+   assigned_by   = db.Column(db.Integer, db.ForeignKey('user.id'), default=None)
+   summary       = db.Column(db.String(1000), nullable=False, default="")
+   Description   = db.Column(db.String(1000), nullable=False, default ="")
    created_by    = db.Column(db.Integer, db.ForeignKey('user.id'))
    created_on    = db.Column(db.DateTime, nullable=False, default = datetime.utcnow)
    modified_by   = db.Column(db.Integer, db.ForeignKey('user.id'))
    modified_on   = db.Column(db.DateTime, nullable=False, default = datetime.utcnow, onupdate=datetime.utcnow)
    community_id  = db.Column(db.Integer, db.ForeignKey('community.id'))
-   parent_id     = db.Column(db.Integer, db.ForeignKey('task.id'))
+   parent_id     = db.Column(db.Integer, db.ForeignKey('task.id'), default=None)
+   status        = db.Column(db.Integer, default = 0, nullable=False)
+
+   @property
+   def serialize(self):
+      """Return object data in easily serializeable format"""
+      s = {
+         'id'           : self.id,
+         'community_id' : self.community_id,
+         'name'         : self.name,
+         'summary'      : self.summary,
+         
+         'created_on'   : dump_datetime(self.created_on),
+         'modified_on'  : dump_datetime(self.modified_on),
+      }
+      if self.parent_id is not None:
+         s['parent_id'] = self.parent_id
+      return s
 
 
    def __repr__(self):

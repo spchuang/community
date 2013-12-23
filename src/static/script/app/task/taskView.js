@@ -29,7 +29,12 @@ define('newTaskModal', function(require){
       },
       
       save: function() {
-      	this.trigger('create');
+         this.model.set({
+            name     :this.$el.find('input[name="name"]').val(),
+            summary  :this.$el.find('input[name="summary"]').val()
+         });
+        
+      	this.trigger('create', this.model.toJSON());
       	this.close();
       },
 
@@ -54,29 +59,73 @@ define('taskSidebar', function(require){
    var Backbone      = require('backbone'),
        Handlebars    = require('handlebars'),
        timeago       = require('timeago'),
-       tpl           = require('text!app/task/sidebarTaskItem.html');
+       tpl           = require('text!app/task/taskSidebarItemView.html');
 
-   var ItemView = Backbone.View.extend({
-      el: $("#task_sidebar"),
+   var taskSidebarView = Backbone.View.extend({
+   
       template: Handlebars.compile(tpl),
+      initialize: function(options){
+         this.$el = options.el;
+         this.tasks = options.collection;
+         this.listenTo(this.tasks, 'add', this.render);
+         this.listenTo(this.tasks, 'reset', this.render);
+      },
       events: {
          'click li'     : 'select',
       },
       
       render: function() {
-         this.$el.html(this.template(this.model.toJSON()));
-         //apply time ago
-         this.$el.find(".comment_time").timeago();
+         this.addAll();
          return this;
       },
-      select: function(event){
-         event.stopPropagation();
-         console.log("SELECT");
+      addOne: function( task ) {
+         var $newItem = $(this.template(task.toJSON()));
+         
+         this.$el.prepend($newItem);
+      
+         $newItem.find('.created_time').timeago();
+      },
+      
+      addAll: function() {
+         //print reversely
+         _.each(this.tasks.last(this.tasks.length).reverse(), this.addOne, this);
+      },
+      select: function(e){
+         e.preventDefault();
+         var id = $(e.currentTarget).attr('id').split("_")[1];
+         this.trigger("select",id);
+
       }
    });
-   return ItemView;
+   return taskSidebarView;
 });
 
+define('mainView', function(require){
+   var Backbone      = require('backbone'),
+       Handlebars    = require('handlebars'),
+       timeago       = require('timeago'),
+       tpl           = require('text!app/task/taskMainItemView.html');
+
+   var taskMainView = Backbone.View.extend({
+   
+      template: Handlebars.compile(tpl),
+      initialize: function(options){
+        this.$el = options.el;
+      },
+      events: {
+
+      },
+      
+      render: function() {
+         
+         this.$el.html(this.template(this.model.toJSON()));
+         this.$el.find('.timeago').timeago();
+         return this;
+      },
+      
+   });
+   return taskMainView;
+});
 
 
 define(function (require) {
@@ -85,34 +134,57 @@ define(function (require) {
        Backbone     = require('backbone'),
        Handlebars   = require('handlebars'),
        tpl          = require('text!app/task/taskApp.html'),
-       taskModal    = require('newTaskModal');
+       models       = require('app/task/taskModel'),
+       taskModal    = require('newTaskModal'),
+       taskSidebarVIew  = require('taskSidebar'),
+       taskMainView     = require('mainView');
        
-   
        
    var TaskView = Backbone.View.extend({
       el: $("#task"), 
       template: Handlebars.compile(tpl),
       initialize: function(options){
          _.bindAll.apply(_, [this].concat(_.functions(this)));
-         this.taskModal = new taskModal();
-         this.listenTo(this.taskModal, 'create', this.addTask);
          this.render();
-         
+         this.tasks        = new models.TaskCollection({communityId: options.communityId}); 
+         this.sidebarView  = new taskSidebarVIew({el: $("#task_sidebar"), collection: this.tasks});
+         this.mainView     = new taskMainView({el: $("#task_main")});
+         this.listenTo(this.sidebarView, 'select', this.renderMainView);
+         this.tasks.fetch({reset: true});
       },
       events: {
          'click #add_button': 'openTaskModal' 
       },
+     
       
       render: function() {
          this.$el.html(this.template());
+         //create task modal
+         this.taskModal = new taskModal();
+         this.listenTo(this.taskModal, 'create', this.addTask);
          this.taskModal.render();
          return this;
       },
       openTaskModal: function(){
+         this.taskModal.model = new models.Task();
          this.taskModal.open();
       },
-      addTask: function(){
-         console.log("COOL");
+      addTask: function(newTaskJSON){
+         var that = this;
+         this.tasks.create(
+            newTaskJSON, 
+            {
+               wait: true,
+               success : function(newTaskModel){
+                  that.tasks.add(newTaskModel);
+               }
+            }
+         );
+      },
+      renderMainView: function(task_id){
+         this.mainView.model = this.tasks.get(task_id);
+         this.mainView.render();
+         //load main view with the selected task
       }
       
    });

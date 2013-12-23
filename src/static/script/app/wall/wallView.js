@@ -148,7 +148,6 @@ define(function (require) {
                url: this.createForm.attr('action'), 
                wait: true,
                success : function(newPost){
-                   console.log(newPost);
                   that.posts.add(newPost);
                }
             }
