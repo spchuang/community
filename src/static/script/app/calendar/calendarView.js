@@ -9,12 +9,13 @@ define('calendarEventItem', function(require){
        tpl           = require('text!app/calendar/eventModal.html');
        
    var EventView = Backbone.View.extend({
-      className: 'modal',
+      className: 'modal fade',
       template: Handlebars.compile(tpl),
       
       events: {
       	'click .close'	  : 'close',
       	'click .cancel'  : 'close',
+      	'hidden.bs.modal': 'teardown',
          'click .ok'		  : 'save',
          'click .edit'	  : 'save',
          'click .delete'  : 'destroy'
@@ -22,38 +23,20 @@ define('calendarEventItem', function(require){
       
       initialize: function(options) {
          this.$content = this.$el.find('.modal-body');
-         //options parameter rewrites these default options
-         this.options = _.extend({
-         	title: null,
-         	animate: true,
-         	template: this.template
-         }, options);
       },
       render: function() {
-      	var $el = this.$el,
-				 $content = this.$content;
+         var data = {
+            name: this.model.get('title'), 
+            start: Date.create(this.model.get('start')).full(), 
+            end: Date.create(this.model.get('end')).full(),
+            description: this.model.get('description')
+         }
+         
+      	this.$el.html(this.template(data));
 
-         console.log(this.model.toJSON());
-			//Loading the modal with options
-      	$el.html(this.options.template(this.model.toJSON()));
-
-      	if($content.$el){
-      		content.render();
-      		$el.find('.modal-body').html(content.$el);
-      	}
-
-      	if(this.options.animate)
-      		$el.addClass('fade');
-
-      	this.isRendered = true;
       	return this;
       },
-      open: function() {
-      	/*if(!this.isRendered)
-      		this.render();*/
-
-      	this.$el.modal('show');
-      },
+      
       save: function() {
       	var that = this,
       		$el = this.$el;
@@ -102,8 +85,15 @@ define('calendarEventItem', function(require){
       destroy: function() {
       	this.collection.get(this.options.data.id).destroy({wait: true, success: this.close()});
       },
+      open: function() {
+      	this.$el.modal('show');
+      },
       close: function(event) {
       	this.$el.modal('hide');
+
+      },
+      teardown: function(event){
+
       }
       
 
@@ -193,28 +183,10 @@ define(function (require) {
          //To stop event click from firing, remove this later on, to let user update and delete events
          if(this.evts.communityId == 'all')
          	return;
-
-         //NEED to fix date errors, some reason if end date is not defined, the end date becomes current date.
-         //Possibly due to fullcalendar default values need to check. Error on client side. 
-         //alert(fcEvent.start);
-         //alert(fcEvent.end);
-         /*var calendarEvent = new eventView(
-         	{title: 'Edit Current Event',
-         		exists: true,
-         		data:{
-         			id: fcEvent.id,
-         			name: fcEvent.title, 
-         			start: Date.create(fcEvent.start).full(), 
-         			end: Date.create(fcEvent.end).full(),
-         			description: fcEvent.description,
-         		},
-        		});
-         calendarEvent.collection = this.evts;
-         calendarEvent.model = "d";
-         calendarEvent.open();*/
-         this.calendarEvent.open();
+         
          this.calendarEvent.model = this.evts.get(fcEvent.id);
          this.calendarEvent.render();
+         this.calendarEvent.open();
       },
       eventDropOrResize: function(fcEvent) {
          console.log("DROP OR RESIZE");
