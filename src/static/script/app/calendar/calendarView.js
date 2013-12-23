@@ -21,7 +21,7 @@ define('calendarEventItem', function(require){
          'click .delete'  : 'destroy'
       },
       
-      initialize: function(options) {
+      initialize: function() {
          this.$content = this.$el.find('.modal-body');
       },
       render: function() {
@@ -29,9 +29,9 @@ define('calendarEventItem', function(require){
             name: this.model.get('title'), 
             start: Date.create(this.model.get('start')).full(), 
             end: Date.create(this.model.get('end')).full(),
-            description: this.model.get('description')
+            description: this.model.get('description'),
+            show_delete: this.show_delete
          }
-         
       	this.$el.html(this.template(data));
 
       	return this;
@@ -41,9 +41,27 @@ define('calendarEventItem', function(require){
       	var that = this,
       		$el = this.$el;
 
+      	//Create new event
+      	if(this.model.isNew()){
+      		this.collection.create(
+      			{
+      				name: $el.find('input[name="name"]').val(),
+      				start: Date.create($el.find('input[name="start"]').val()).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'),
+      				end: Date.create($el.find('input[name="end"]').val()).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'),
+      				description: $el.find('input[name="description"]').val()
+      			},
+					{
+						wait: true,
+						success: function(newEvent) {
+      					console.log(newEvent);
+                  	that.collection.add(newEvent);
+                  	that.close();
+               	}
+      			}
+      		);
+      	}else{
       	//Update event
-      	if(this.options.exists){
-      		this.collection.get(this.options.data.id).save(
+      		this.model.save(
       			{
        				name: $el.find('input[name="name"]').val(),
       				start: Date.create($el.find('input[name="start"]').val()).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'),
@@ -62,28 +80,10 @@ define('calendarEventItem', function(require){
       		);
       		//#todo for some reason the success callback is not getting fired
       		that.close();
-      	}else{
-      	//Create new event
-      		this.collection.create(
-      			{
-      				name: $el.find('input[name="name"]').val(),
-      				start: Date.create($el.find('input[name="start"]').val()).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'),
-      				end: Date.create($el.find('input[name="end"]').val()).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'),
-      				description: $el.find('input[name="description"]').val()
-      			},
-					{
-						wait: true,
-						success: function(newEvent) {
-      					console.log(newEvent);
-                  	that.collection.add(newEvent);
-                  	that.close();
-               	}
-      			}
-      		);
       	}
       },
       destroy: function() {
-      	this.collection.get(this.options.data.id).destroy({wait: true, success: this.close()});
+      	this.model.destroy({wait: true, success: this.close()});
       },
       open: function() {
       	this.$el.modal('show');
@@ -93,9 +93,8 @@ define('calendarEventItem', function(require){
 
       },
       teardown: function(event){
-
+      	this.show_delete = false
       }
-      
 
    });
    
@@ -145,12 +144,13 @@ define(function (require) {
          });
          
          this.calendarEvent = new eventView();
-      },
-      addOne: function(fcEvent) {
-         this.$el.fullCalendar('renderEvent', fcEvent.toJSON());
+         this.calendarEvent.collection = this.evts;
       },
       addAll: function(){
          this.$el.fullCalendar('addEventSource', this.evts.toJSON());
+      },
+      addOne: function(fcEvent) {
+         this.$el.fullCalendar('renderEvent', fcEvent.toJSON());
       },
       change: function(event) {
          var fcEvent = this.$el.fullCalendar('clientEvents', event.get('id'))[0];
@@ -160,52 +160,29 @@ define(function (require) {
          fcEvent.description = event.get('description');
          fcEvent.color = event.get('color');
          this.$el.fullCalendar('updateEvent', fcEvent);
-      },      
-      select: function(startDate, endDate) {
-         console.log("SELECT");
-         var calendarEvent = new eventView({
-         	title: 'Add New Event',
-         	data:
-         	{
-         		start: Date.create(startDate).full(), 
-         		end: Date.create(endDate).full(), 
-         	}
-        	});
-         calendarEvent.collection = this.evts;
-         calendarEvent.model = new Event();
-         calendarEvent.open();
-      },
+      },     
       destroy: function(fcEvent) {
       	this.$el.fullCalendar('removeEvents', fcEvent.id);
+      }, 
+      select: function(startDate, endDate) {
+         console.log("SELECT");
+         this.calendarEvent.model = new models.Event({title: "", start: startDate, end: endDate, description: ""});
+         this.calendarEvent.render();
+         this.calendarEvent.open();
       },
       eventClick: function(fcEvent) {
          console.log("CLICK");
-         //To stop event click from firing, remove this later on, to let user update and delete events
-         if(this.evts.communityId == 'all')
-         	return;
-         
          this.calendarEvent.model = this.evts.get(fcEvent.id);
+         this.calendarEvent.show_delete = true;
          this.calendarEvent.render();
          this.calendarEvent.open();
       },
       eventDropOrResize: function(fcEvent) {
          console.log("DROP OR RESIZE");
-         var calendarEvent = new eventView(
-         	{title: 'Edit Current Event',
-         		exists: true,
-         		data:{
-         			id: fcEvent.id,
-         			name: fcEvent.title, 
-         			start: Date.create(fcEvent.start).full(), 
-         			end: Date.create(fcEvent.end).full(),
-         			description: fcEvent.description,
-         		},
-        		});
-         calendarEvent.collection = this.evts;
-         calendar
-         //calendarEvent.model = new Event();
-         calendarEvent.render();
-         calendarEvent.save();
+         this.calendarEvent.model = this.evts.get(fcEvent.id);
+         this.calendarEvent.model.set({start: fcEvent.start, end: fcEvent.end});
+         this.calendarEvent.render();
+         this.calendarEvent.save();
       }
    });
    return CalendarView; 
