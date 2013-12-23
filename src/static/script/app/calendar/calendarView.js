@@ -33,8 +33,9 @@ define('calendarEventItem', function(require){
       	var $el = this.$el,
 				 $content = this.$content;
 
+         console.log(this.model.toJSON());
 			//Loading the modal with options
-      	$el.html(this.options.template(this.options));
+      	$el.html(this.options.template(this.model.toJSON()));
 
       	if($content.$el){
       		content.render();
@@ -48,8 +49,8 @@ define('calendarEventItem', function(require){
       	return this;
       },
       open: function() {
-      	if(!this.isRendered)
-      		this.render();
+      	/*if(!this.isRendered)
+      		this.render();*/
 
       	this.$el.modal('show');
       },
@@ -189,7 +190,6 @@ define(function (require) {
       },
       eventClick: function(fcEvent) {
          console.log("CLICK");
-
          //To stop event click from firing, remove this later on, to let user update and delete events
          if(this.evts.communityId == 'all')
          	return;
@@ -198,7 +198,7 @@ define(function (require) {
          //Possibly due to fullcalendar default values need to check. Error on client side. 
          //alert(fcEvent.start);
          //alert(fcEvent.end);
-         var calendarEvent = new eventView(
+         /*var calendarEvent = new eventView(
          	{title: 'Edit Current Event',
          		exists: true,
          		data:{
@@ -210,8 +210,11 @@ define(function (require) {
          		},
         		});
          calendarEvent.collection = this.evts;
-         calendarEvent.model = new Event();
-         calendarEvent.open();
+         calendarEvent.model = "d";
+         calendarEvent.open();*/
+         this.calendarEvent.open();
+         this.calendarEvent.model = this.evts.get(fcEvent.id);
+         this.calendarEvent.render();
       },
       eventDropOrResize: function(fcEvent) {
          console.log("DROP OR RESIZE");
@@ -227,7 +230,8 @@ define(function (require) {
          		},
         		});
          calendarEvent.collection = this.evts;
-         calendarEvent.model = new Event();
+         calendar
+         //calendarEvent.model = new Event();
          calendarEvent.render();
          calendarEvent.save();
       }
