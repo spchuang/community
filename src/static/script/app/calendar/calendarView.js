@@ -42,39 +42,32 @@ define('calendarEventItem', function(require){
       	var that = this,
       		$el = this.$el;
 
+         this.model.set({ 
+               name: $el.find('input[name="name"]').val(),
+               start: Date.create($el.find('input[name="start"]').val()).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'),
+               end: Date.create($el.find('input[name="end"]').val()).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'),
+               description: $el.find('input[name="description"]').val()
+            });
+
       	//Create new event
-      	if(this.model.isNew()){
-      		this.collection.create(
-      			{
-      				name: $el.find('input[name="name"]').val(),
-      				start: Date.create($el.find('input[name="start"]').val()).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'),
-      				end: Date.create($el.find('input[name="end"]').val()).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'),
-      				description: $el.find('input[name="description"]').val()
-      			},
-					{
-						wait: true,
-						success: function(newEvent) {
-      					console.log(newEvent);
-                  	that.collection.add(newEvent);
-                  	that.close();
-               	}
-      			}
-      		);
+      	if(this.model.isNew()){       
+            var result = this.collection.create(this.model, 
+               {
+                  wait: true,
+                  success: function(newEvent) {
+                     console.log(newEvent);
+                     //Add isn't getting auto fired on create, something to do with wait, but need request to add to calendar
+                     that.collection.add(newEvent);
+                     that.close();
+                  }
+               });
       	}else{
       	//Update event
-      		this.model.save(
-      			{
-       				name: $el.find('input[name="name"]').val(),
-      				start: Date.create($el.find('input[name="start"]').val()).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'),
-      				end: Date.create($el.find('input[name="end"]').val()).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'),
-      				description: $el.find('input[name="description"]').val()     			
-      			},
-
-      			{
-      				wait: true,
+      		this.model.save({}, 
+               {
+                  wait: true,
       				success: function(updatedEvent) {
       					console.log(updatedEvent);
-      					that.collection.change(updatedEvent);
       					that.close();
       				}
       			}
@@ -150,8 +143,8 @@ define(function (require) {
       addAll: function(){
          this.$el.fullCalendar('addEventSource', this.evts.toJSON());
       },
-      addOne: function(fcEvent) {
-         this.$el.fullCalendar('renderEvent', fcEvent.toJSON());
+      addOne: function(event) { 
+         this.$el.fullCalendar('renderEvent', event.toJSON());
       },
       change: function(event) {
          var fcEvent = this.$el.fullCalendar('clientEvents', event.get('id'))[0];
