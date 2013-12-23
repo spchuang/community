@@ -24,7 +24,7 @@ define(function (require) {
       },
       model: Event,
       url: function(){
-         return 'http://localhost:5000/api/calendar/list?c_id='+this.communityId;
+         return 'http://localhost:5000/api/community/'+this.communityId+'/calendar/events';
       },
       parse: function(response) {
          return response.data;

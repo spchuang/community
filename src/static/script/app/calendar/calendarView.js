@@ -21,9 +21,8 @@ define('calendarEventItem', function(require){
       },
       
       initialize: function(options) {
-         //_(this).bindAll();
          this.$content = this.$el.find('.modal-body');
-         //Options parameter rewrites these default options
+         //options parameter rewrites these default options
          this.options = _.extend({
          	title: null,
          	animate: true,
@@ -51,6 +50,7 @@ define('calendarEventItem', function(require){
       open: function() {
       	if(!this.isRendered)
       		this.render();
+
       	this.$el.modal('show');
       },
       save: function() {
@@ -68,7 +68,6 @@ define('calendarEventItem', function(require){
       			},
 
       			{
-      				url: this.options.action.update,
       				wait: true,
       				success: function(updatedEvent) {
       					console.log(updatedEvent);
@@ -88,11 +87,9 @@ define('calendarEventItem', function(require){
       				end: Date.create($el.find('input[name="end"]').val()).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'),
       				description: $el.find('input[name="description"]').val()
       			},
-
-      			{
-      				url: this.options.action,
-      				wait: true,
-      				success: function(newEvent) {
+					{
+						wait: true,
+						success: function(newEvent) {
       					console.log(newEvent);
                   	that.collection.add(newEvent);
                   	that.close();
@@ -102,11 +99,7 @@ define('calendarEventItem', function(require){
       	}
       },
       destroy: function() {
-      	this.collection.get(this.options.data.id).destroy({
-      		url: this.options.action.delete,
-      		wait: true,
-      		success: this.close()
-      	});
+      	this.collection.get(this.options.data.id).destroy({wait: true, success: this.close()});
       },
       close: function(event) {
       	this.$el.modal('hide');
@@ -118,7 +111,6 @@ define('calendarEventItem', function(require){
    return EventView;
 });
 
-//Main calendar logic
 define(function (require) {
    var $            = require('jquery'),
        _            = require('underscore'),
@@ -133,7 +125,6 @@ define(function (require) {
       initialize: function(options){
          _.bindAll.apply(_, [this].concat(_.functions(this)));
          
-         //can't use this.events
          this.evts =  new models.EventCollection({communityId: options.communityId});  
          this.listenTo(this.evts, 'reset', this.addAll);
          this.listenTo(this.evts, 'add', this.addOne);
@@ -152,9 +143,9 @@ define(function (require) {
                right: 'month,agendaWeek,agendaDay',
                ignoreTimezone: false
             },
-            selectable: true,
-            selectHelper: true,
-            editable: true,
+            selectable: (this.evts.communityId == 'all') ? false : true,
+            selectHelper: (this.evts.communityId == 'all') ? false : true,
+            editable: (this.evts.communityId == 'all') ? false : true,
             allDayDefault: false,
             select: this.select,
             eventClick: this.eventClick,
@@ -181,14 +172,14 @@ define(function (require) {
       },      
       select: function(startDate, endDate) {
          console.log("SELECT");
-         var calendarEvent = new eventView(
-         	{title: 'Add New Event',
-         		action: 'http://localhost:5000/api/calendar/new_event?c_id='+this.evts.communityId,
-         		data:{
-         			start: Date.create(startDate).full(), 
-         			end: Date.create(endDate).full(), 
-         		}
-        		});
+         var calendarEvent = new eventView({
+         	title: 'Add New Event',
+         	data:
+         	{
+         		start: Date.create(startDate).full(), 
+         		end: Date.create(endDate).full(), 
+         	}
+        	});
          calendarEvent.collection = this.evts;
          calendarEvent.model = new Event();
          calendarEvent.open();
@@ -198,9 +189,17 @@ define(function (require) {
       },
       eventClick: function(fcEvent) {
          console.log("CLICK");
+
+         //To stop event click from firing, remove this later on, to let user update and delete events
+         if(this.evts.communityId == 'all')
+         	return;
+
+         //NEED to fix date errors, some reason if end date is not defined, the end date becomes current date.
+         //Possibly due to fullcalendar default values need to check. Error on client side. 
+         //alert(fcEvent.start);
+         //alert(fcEvent.end);
          var calendarEvent = new eventView(
          	{title: 'Edit Current Event',
-         		action: fcEvent.action,
          		exists: true,
          		data:{
          			id: fcEvent.id,
@@ -209,7 +208,6 @@ define(function (require) {
          			end: Date.create(fcEvent.end).full(),
          			description: fcEvent.description,
          		},
-        		
         		});
          calendarEvent.collection = this.evts;
          calendarEvent.model = new Event();
@@ -217,20 +215,21 @@ define(function (require) {
       },
       eventDropOrResize: function(fcEvent) {
          console.log("DROP OR RESIZE");
-         alert(fcEvent.start);
-         this.evts.get(fcEvent.id).save(
-         	{start: Date.create(fcEvent.start).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'), 
-         		end: Date.create(fcEvent.end).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}')
-         	},
-
-         	{
-         		url: fcEvent.action.update,
-         		sucess: function(){
-         			alert("yes");
-         		}
-         	}
-
-         );
+         var calendarEvent = new eventView(
+         	{title: 'Edit Current Event',
+         		exists: true,
+         		data:{
+         			id: fcEvent.id,
+         			name: fcEvent.title, 
+         			start: Date.create(fcEvent.start).full(), 
+         			end: Date.create(fcEvent.end).full(),
+         			description: fcEvent.description,
+         		},
+        		});
+         calendarEvent.collection = this.evts;
+         calendarEvent.model = new Event();
+         calendarEvent.render();
+         calendarEvent.save();
       }
    });
    return CalendarView; 

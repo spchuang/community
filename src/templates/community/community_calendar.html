@@ -19,131 +19,14 @@
 </div>
 
 <script src="/static/script/vendors/require.js"></script>
+
 <script type="text/javascript">
-   //define community id here
    var COMMUNITY_ID = '{{community.id}}';
-   // Load common code that includes config,
-   // then load the app logic for this page.
    require(['/static/script/common.js'], function (common) {
       require(['/static/script/app/calendar/calendarView.js'],function(calendar){
          new calendar({communityId: COMMUNITY_ID});
       });
    });
-    //var events = new Events();
-    //new EventsView({el: $("#event_list_content"), collection: events}).render();
 </script>
-
-<!--
-<script type=text/javascript>
-var display = '{{community.id}}';
-var source   = $("#event-list-template").html();
-var eventListTemplate = Handlebars.compile(source);
-
-function update_event_list(){
-   $.get('{{ url_for('calendar.list', c_id=community.id) }}')
-      .done(function(result){
-         var content = $("#event_list_content");
-         content.empty();
-         var html    = eventListTemplate(result.data);
-         content.append(html); 
-   });
-}
-
-function delete_event(url){
-   $.ajax({
-      type: 'POST',
-      url: url,
-   }).done(function(result){
-      if(result.success){
-         update_event_list();
-      }else{
-         console.log(result);
-         alert(result.errors);
-      }
-   }).fail(function(errors){
-      console.log(errors);
-   });
-}
-
-$( document ).ready(function() {
-   if(display == 'all'){
-      $(".btn").css('display', 'none');
-   }
-   update_event_list();
-
-   $("#create_event").click(function(){
-      var form = $("#create_form");
-      var data = form.serialize();
-      $.ajax({
-         type: form.attr('method'),
-         url: form.attr('action'),
-         data: data,
-      }).done(function(data){
-         //remove errors
-         form.find(".form_field").each(function(){
-            $(this).removeClass('has-error');
-            $(this).find('ul.error_message').empty();
-         });
-
-         if(data.success){
-            $('#createEventModal').modal('hide');
-            update_event_list();
-         }else{
-            //raise error
-            $.each(data.errors, function(field, errors){
-               var error_field = $("#"+field);
-               error_field.addClass('has-error');
-               $.each(errors, function(key, e){
-                  error_field.find('ul.error_message').append("<li>"+e+"</li>");
-               });
-            });
-         }
-      }).fail(function(error){
-         console.log(error);
-      });
-   });
-
-   $("#update_event").click(function(){
-      var form = $("#update_form");
-      var data = form.serialize();
-      $.ajax({
-         type: form.attr('method'),
-         url: form.attr('action'),
-         data: data,
-      }).done(function(data){
-         //remove errors
-         form.find(".form_field").each(function(){
-            $(this).removeClass('has-error');
-            $(this).find('ul.error_message').empty();
-         });
-
-         if(data.success){
-            $('#updateEventModal').modal('hide');
-            update_event_list();
-         }else{
-            //raise error
-            $.each(data.errors, function(field, errors){
-               var error_field = $("#"+field);
-               error_field.addClass('has-error');
-               $.each(errors, function(key, e){
-                  error_field.find('ul.error_message').append("<li>"+e+"</li>");
-               });
-            });
-         }
-      }).fail(function(error){
-         console.log(error);
-      });
-   });
-
-   $(document).on('click','.delete_event', function(e){
-      var id = $(this).parent().attr('id').split("_")[1];
-      var dialog = confirm("Do you want to delete this event?");
-      if(dialog)
-         delete_event($(this).attr('data-url'));
-   });
-
-});
-</script>
--->
 
 {% endblock %}

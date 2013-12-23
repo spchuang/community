@@ -2,6 +2,25 @@
 {% block body %}
 {% from "helper/formhelpers.html" import render_input_field%}
 
+<!--Comment this out when update with require.js + backbone-->
+<script src="{{ url_for('static', filename='script/vendors/jquery/1.9.1/jquery.min.js') }}"></script>
+   
+<script src="{{ url_for('static', filename='script/vendors/bootstrap/3.0.2/bootstrap.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='script/vendors/handlebars-v1.1.2.js') }}"></script>
+<script src="{{ url_for('static', filename='script/vendors/jquery.timeago.js') }}"></script>
+
+<script type=text/javascript>
+      Handlebars.registerHelper('if_eq', function(a, b, opts) {
+         if(a == b){ // Or === depending on your needs
+            return opts.fn(this);
+         }else{
+            return opts.inverse(this);
+         }
+      });
+</script>
+<!--Comment this out when update with require.js + backbone-->
+
 <div class="container">
 
    <div class="col-md-3">
