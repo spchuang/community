@@ -129,7 +129,7 @@ define(function (require) {
             },
             selectable: (this.evts.communityId == 'all') ? false : true,
             selectHelper: (this.evts.communityId == 'all') ? false : true,
-            editable: (this.evts.communityId == 'all') ? false : true,
+            editable: true,
             allDayDefault: false,
             select: this.select,
             eventClick: this.eventClick,
@@ -166,11 +166,6 @@ define(function (require) {
       },
       eventClick: function(fcEvent) {
          console.log("CLICK");
-         
-         //To stop event click from firing, remove this later on, to let user update and delete events
-         if(this.evts.communityId == 'all')
-         	return;
-
          this.calendarEvent.model = this.evts.get(fcEvent.id);
          this.calendarEvent.show_delete = true;
          this.calendarEvent.render();
