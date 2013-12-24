@@ -13,7 +13,7 @@ def construct_event(c_id):
          event = e.Event.serialize
       else:
          event = e.serialize
-         return event
+      return event
    return serialize
 
 
