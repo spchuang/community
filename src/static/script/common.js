@@ -15,7 +15,8 @@ requirejs.config({
         jquery_ui:    'jquery-ui.custom.min',
         fullcalendar: 'fullcalendar/1.6.4/fullcalendar',
         sugar: 		 'sugar.min',
-        bootstrap:    'bootstrap/3.0.2/bootstrap.min'
+        bootstrap:    'bootstrap/3.0.2/bootstrap.min',
+        editable:     'bootstrap3-editable-1.5.1/bootstrap3-editable/js/bootstrap-editable'
 
    },
     shim: {
@@ -38,7 +39,11 @@ requirejs.config({
       },
       bootstrap: {
          deps: ["jquery"]
+      },
+      editable:{
+         deps: ["bootstrap", "jquery"]
       }
+      
       
     },
     urlArgs: "bust=" + (new Date()).getTime(), //remove cache

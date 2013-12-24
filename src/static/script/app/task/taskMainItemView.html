@@ -1,4 +1,39 @@
-<h3>{{name}}</h3>
-<h3>{{summary}}</h3>
-<h3><span class="timeago" title="{{created_on}}"></span> </h3>
-<h3><span class="teimago " title="{{modified_on}}"></span> </h3>
+<div class="panel-heading">
+   <button  type="button" class="btn btn-danger btn-xs pull-right">Delete</button>
+   <h3>{{name}}</h3>
+   <div contenteditable=true data-col="summary">{{summary}}</div>
+  
+</div>
+
+
+<!--<h3><span class="teimago " title="{{created_on}}"></span> </h3>!-->
+
+<div class="panel-body">
+   <h4>Deatails</h4>
+<span class="glyphicon glyphicon-star"></span> Star
+   <dl class="dl-horizontal">
+     <dt>Priority</dt>
+     <dd>low</dd>
+     <dt>Assigned to</dt>
+     <dd>{{assigned_to.first_names}}</dd>
+     <dt>Created</dt>
+     <dd><span class="timeago" title="{{created_on}}"></span></dd>
+     <dt>Updated</dt>
+     <dd><span class="timeago" title="{{modified_on}}"></span></dd>
+   </dl>
+   <hr>
+   <a href="#" id="username" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">superuser</a>
+   
+   <h4>Description</h4>
+   
+   <div class="well well-sm">
+      <div class="editable" data-col='description'>
+         {{description}}
+      </div>
+      
+      
+   </div>
+   <hr>
+   <h4>Activity Board</h4>
+</div>
+

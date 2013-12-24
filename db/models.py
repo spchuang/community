@@ -190,6 +190,8 @@ class Task(db.Model):
    parent_id     = db.Column(db.Integer, db.ForeignKey('task.id'), default=None)
    status        = db.Column(db.Integer, default = 0, nullable=False)
 
+   assigned_to_user = db.relationship('User', primaryjoin = "User.id == Task.assigned_to")
+
    @property
    def serialize(self):
       """Return object data in easily serializeable format"""
@@ -201,6 +203,7 @@ class Task(db.Model):
          
          'created_on'   : dump_datetime(self.created_on),
          'modified_on'  : dump_datetime(self.modified_on),
+         #'assigned_to'  : self.assigned_to_user.serialize or None
       }
       if self.parent_id is not None:
          s['parent_id'] = self.parent_id

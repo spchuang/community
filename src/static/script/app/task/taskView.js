@@ -73,7 +73,7 @@ define('taskSidebar', function(require){
          
       },
       events: {
-         'click li'     : 'select',
+         'click a'     : 'select',
       },
       
       render: function() {
@@ -95,7 +95,7 @@ define('taskSidebar', function(require){
          e.preventDefault();
          var $target = $(e.currentTarget);
          //set selected item as active
-         this.$el.find('li').removeClass('active');
+         this.$el.find('a').removeClass('active');
          $target.addClass('active');
          this.trigger("select", $target.data('id'));
       }
@@ -107,25 +107,43 @@ define('mainView', function(require){
    var Backbone      = require('backbone'),
        Handlebars    = require('handlebars'),
        timeago       = require('timeago'),
+       $             = require('jquery'),
+       editable      = require('editable'),
        tpl           = require('text!app/task/taskMainItemView.html');
 
+   $.fn.editable.defaults.mode = 'inline';
    var taskMainView = Backbone.View.extend({
    
       template: Handlebars.compile(tpl),
       initialize: function(options){
         this.$el = options.el;
+        this.$el.on('focus', '[contenteditable]', function() {
+            var $this = $(this);
+            $this.data('before', $this.html());
+            return $this;
+         }).on('blur keyup paste input', '[contenteditable]', function() {
+            var $this = $(this);
+            if ($this.data('before') !== $this.html()) {
+               $this.data('before', $this.html());
+               $this.trigger('change');
+            }
+            return $this;
+         });
+        
       },
       events: {
-
+   
       },
       
       render: function() {
-         
          this.$el.html(this.template(this.model.toJSON()));
          this.$el.find('.timeago').timeago();
+         
+         this.$el.find('#username').editable();
+         
          return this;
       },
-      
+
    });
    return taskMainView;
 });
