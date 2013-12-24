@@ -22,6 +22,7 @@ define('newTaskModal', function(require){
       initialize: function(options) {
          this.$content = this.$el.find('.modal-body');
       },
+
       render: function() {
       
       	this.$el.html(this.template());
@@ -33,8 +34,9 @@ define('newTaskModal', function(require){
             name     :this.$el.find('input[name="name"]').val(),
             summary  :this.$el.find('input[name="summary"]').val()
          });
-        
       	this.trigger('create', this.model.toJSON());
+      	//reset the form
+      	this.render();
       	this.close();
       },
 
@@ -43,7 +45,6 @@ define('newTaskModal', function(require){
       },
       close: function(event) {
       	this.$el.modal('hide');
-
       },
       teardown: function(event){
 
@@ -69,32 +70,34 @@ define('taskSidebar', function(require){
          this.tasks = options.collection;
          this.listenTo(this.tasks, 'add', this.render);
          this.listenTo(this.tasks, 'reset', this.render);
+         
       },
       events: {
          'click li'     : 'select',
       },
       
       render: function() {
+         this.$el.empty();
          this.addAll();
          return this;
       },
       addOne: function( task ) {
          var $newItem = $(this.template(task.toJSON()));
-         
          this.$el.prepend($newItem);
-      
          $newItem.find('.created_time').timeago();
       },
       
       addAll: function() {
-         //print reversely
+         //print reversively
          _.each(this.tasks.last(this.tasks.length).reverse(), this.addOne, this);
       },
       select: function(e){
          e.preventDefault();
-         var id = $(e.currentTarget).attr('id').split("_")[1];
-         this.trigger("select",id);
-
+         var $target = $(e.currentTarget);
+         //set selected item as active
+         this.$el.find('li').removeClass('active');
+         $target.addClass('active');
+         this.trigger("select", $target.data('id'));
       }
    });
    return taskSidebarView;

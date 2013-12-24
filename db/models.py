@@ -210,6 +210,14 @@ class Task(db.Model):
    def __repr__(self):
       return '<Task %r %s>' % (self.id, self.name)
 
+class AcitivityFeed(db.Model):
+   __tablename__ = 'activity_feed'
+   id            = db.Column(db.Integer, primary_key = True)
+   
+class Notification(db.Model):
+   __tablename__ = 'notification'
+   id            = db.Column(db.Integer, primary_key = True)
+
 
 
 class Post(db.Model):
