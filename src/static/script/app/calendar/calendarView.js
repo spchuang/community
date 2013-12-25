@@ -44,8 +44,8 @@ define('calendarEventItem', function(require){
 
          this.model.set({ 
                name: $el.find('input[name="name"]').val(),
-               start: Date.create($el.find('input[name="start"]').val()).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'),
-               end: Date.create($el.find('input[name="end"]').val()).format('{yyyy}-{MM}-{dd} {hh}:{mm}:{ss}'),
+               start: Date.create($el.find('input[name="start"]').val()).format('{yyyy}-{MM}-{dd} {24hr}:{mm}:{ss}'),
+               end: Date.create($el.find('input[name="end"]').val()).format('{yyyy}-{MM}-{dd} {24hr}:{mm}:{ss}'),
                description: $el.find('input[name="description"]').val()
             });
 
@@ -56,14 +56,14 @@ define('calendarEventItem', function(require){
                   wait: true,
                   success: function(newEvent) {
                      console.log(newEvent);
-                     //Add isn't getting auto fired on create, something to do with wait, but need request to add to calendar
+                     //Add not getting auto-fired by create. Why?
                      that.collection.add(newEvent);
                      that.close();
                   }
                });
       	}else{
       	//Update event
-      		this.model.save({}, 
+      		this.model.save(null, 
                {
                   wait: true,
       				success: function(updatedEvent) {
@@ -72,8 +72,6 @@ define('calendarEventItem', function(require){
       				}
       			}
       		);
-      		//#todo for some reason the success callback is not getting fired
-      		that.close();
       	}
       },
       destroy: function() {
@@ -173,6 +171,12 @@ define(function (require) {
       },
       eventDropOrResize: function(fcEvent) {
          console.log("DROP OR RESIZE");
+
+         //For some reason full calendar auto sets end as null if the start and end are equal
+         if(fcEvent.end == null){
+            fcEvent.end = fcEvent.start;
+         }
+
          this.calendarEvent.model = this.evts.get(fcEvent.id);
          this.calendarEvent.model.set({start: fcEvent.start, end: fcEvent.end});
          this.calendarEvent.render();
