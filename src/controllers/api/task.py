@@ -1,6 +1,6 @@
 from flask import Blueprint,jsonify,session, g, redirect, url_for, render_template, request, abort
 from flask.ext.login import login_required
-from src.forms import TaskForm
+from src.forms import TaskForm, CreateTaskForm
 from db.models import Community, Task, User
 from src import db
 
@@ -25,7 +25,7 @@ def get_tasks(c_id):
 @api.route('/community/<int:c_id>/tasks', methods=['POST'])
 @login_required
 def new_task(c_id):
-   form = TaskForm()
+   form = CreateTaskForm()
 
    if form.validate_on_submit():
       t = Task(name           = form.name.data, 

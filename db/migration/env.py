@@ -6,7 +6,7 @@ from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
 #hacky fix
 import sys
-sys.path.append('/Users/mac/github/community/')
+sys.path.append('/Users/spchuang/github/community/')
 from src import db
 
 # this is the Alembic Config object, which provides
