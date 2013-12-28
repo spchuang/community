@@ -1,5 +1,5 @@
 <div class="panel-heading">
-   <button  type="button" class="btn btn-danger btn-xs pull-right">Delete</button>
+   <button id='delete_task' type="button" class="btn btn-danger btn-xs pull-right">Delete</button>
    <h3>{{name}}</h3>
    <div contenteditable=true data-col="summary">{{summary}}</div>
   
@@ -27,9 +27,11 @@
    <h4>Description</h4>
    
    <div class="well well-sm">
-      <div class="editable" data-col='description'>
+      <!--<div class="editable" data-col='description'>
          {{description}}
       </div>
+      !-->
+      <a href="#" id="description" data-type="textarea" data-inputclass="span5" data-title="Enter description">{{description}}</a>
       
       
    </div>

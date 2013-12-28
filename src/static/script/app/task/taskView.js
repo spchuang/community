@@ -70,6 +70,7 @@ define('taskSidebar', function(require){
          this.tasks = options.collection;
          this.listenTo(this.tasks, 'add', this.render);
          this.listenTo(this.tasks, 'reset', this.render);
+         this.listenTo(this.tasks, 'remove', this.removeOne);
          
       },
       events: {
@@ -90,6 +91,13 @@ define('taskSidebar', function(require){
       addAll: function() {
          //print reversively
          _.each(this.tasks.last(this.tasks.length).reverse(), this.addOne, this);
+      },
+      
+      removeOne: function(task){
+         var item = this.$el.find('[data-id='+task.id+']');
+         item.fadeOut(300,function() {
+             $(this).remove();
+         });
       },
       select: function(e){
          e.preventDefault();
@@ -132,17 +140,40 @@ define('mainView', function(require){
         
       },
       events: {
-   
+         'click #delete_task' : 'delete'
+      },
+      renderEditable: function(fieldName){
+         var that = this;
+         this.$el.find('#'+fieldName).editable({
+            pk:  this.model.get('id'),
+            success     : function(response, newValue) {
+               that.model.set(fieldName, newValue);
+               that.model.save(fieldName, newValue);
+               console.log(self.model);
+            }
+		
+         });
       },
       
       render: function() {
          this.$el.html(this.template(this.model.toJSON()));
          this.$el.find('.timeago').timeago();
+         this.renderEditable("description");
          
-         this.$el.find('#username').editable();
          
          return this;
       },
+      delete: function(){
+        
+         this.trigger('delete', this.model.id);
+      },
+      show: function(){
+         this.$el.fadeIn(300);
+      },
+      hide: function(){
+         this.$el.fadeOut(300);
+      }
+      
 
    });
    return taskMainView;
@@ -170,7 +201,7 @@ define(function (require) {
          this.tasks        = new models.TaskCollection({communityId: options.communityId}); 
          this.sidebarView  = new taskSidebarVIew({el: $("#task_sidebar"), collection: this.tasks});
          this.mainView     = new taskMainView({el: $("#task_main")});
-         this.listenTo(this.sidebarView, 'select', this.renderMainView);
+         this.listen();
          this.tasks.fetch({reset: true});
       },
       events: {
@@ -182,31 +213,49 @@ define(function (require) {
          this.$el.html(this.template());
          //create task modal
          this.taskModal = new taskModal();
-         this.listenTo(this.taskModal, 'create', this.addTask);
          this.taskModal.render();
          return this;
+      },
+      renderMainView: function(task_id){
+         this.mainView.show();
+         this.mainView.model = this.tasks.get(task_id);
+         this.mainView.render();
+         //load main view with the selected task
       },
       openTaskModal: function(){
          this.taskModal.model = new models.Task();
          this.taskModal.open();
       },
+      listen: function(){
+         this.listenTo(this.taskModal, 'create', this.addTask);
+         this.listenTo(this.sidebarView, 'select', this.renderMainView);
+         this.listenTo(this.mainView, 'delete', this.deleteTask);
+      },
+    
       addTask: function(newTaskJSON){
          var that = this;
          this.tasks.create(
             newTaskJSON, 
             {
                wait: true,
-               success : function(newTaskModel){
-                  that.tasks.add(newTaskModel);
+               success : function(model){
+                  that.tasks.add(model);
                }
             }
          );
       },
-      renderMainView: function(task_id){
-         this.mainView.model = this.tasks.get(task_id);
-         this.mainView.render();
-         //load main view with the selected task
-      }
+      deleteTask: function(id){
+         var that = this;
+         this.tasks.get(id).destroy({
+            wait: true, 
+            success: function(model, response){
+               that.tasks.remove(model);
+               that.mainView.hide();
+               
+            }
+         });
+      },
+      
       
    });
    return TaskView; 

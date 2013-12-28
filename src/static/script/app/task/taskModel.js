@@ -4,6 +4,7 @@ define(function (require) {
   
        
    var Task  = Backbone.Model.extend({
+      
       parse: function(response, options){
          if (options.collection){
             return response;
@@ -25,7 +26,8 @@ define(function (require) {
       },
       parse: function(response) {
          return response.data;
-      }
+      },
+     
  
    });
 

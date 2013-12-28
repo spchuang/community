@@ -36,6 +36,8 @@ class CreateEventForm(Form):
    end         = DateTimeField('end', [validators.Required()])
    description = TextField('description')
    
-class CreateTaskForm(Form):
+class TaskForm(Form):
    name     = TextField('name', [validators.Required()]) 
    summary  = TextField('summary')
+   description = TextField('description')
+   

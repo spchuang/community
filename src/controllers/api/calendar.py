@@ -54,7 +54,7 @@ def new_event(c_id):
 def update_event(c_id, e_id):
    form = CreateEventForm()
    if form.validate_on_submit():
-      e = Event().query.filter_by(id=e_id).first() 
+      e = Event().query.get(e_id)
       e.name         = form.name.data
       e.start_on     = form.start.data
       e.end_on       = form.end.data
@@ -71,7 +71,7 @@ def update_event(c_id, e_id):
 @login_required
 def delete_event(c_id, e_id):
 	  
-   e = Event().query.filter_by(id=e_id).first()
+   e = Event().query.get(e_id)
    if e is None:
       return jsonify(success = False)
    db.session.delete(e)

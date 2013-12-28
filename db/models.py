@@ -181,7 +181,7 @@ class Task(db.Model):
    assigned_to   = db.Column(db.Integer, db.ForeignKey('user.id'), default=None)
    assigned_by   = db.Column(db.Integer, db.ForeignKey('user.id'), default=None)
    summary       = db.Column(db.String(1000), nullable=False, default="")
-   Description   = db.Column(db.String(1000), nullable=False, default ="")
+   description   = db.Column(db.String(1000), nullable=False, default ="")
    created_by    = db.Column(db.Integer, db.ForeignKey('user.id'))
    created_on    = db.Column(db.DateTime, nullable=False, default = datetime.utcnow)
    modified_by   = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -200,6 +200,7 @@ class Task(db.Model):
          'community_id' : self.community_id,
          'name'         : self.name,
          'summary'      : self.summary,
+         'description'  : self.description,
          
          'created_on'   : dump_datetime(self.created_on),
          'modified_on'  : dump_datetime(self.modified_on),
