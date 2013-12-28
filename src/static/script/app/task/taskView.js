@@ -73,9 +73,11 @@ define('taskSidebar', function(require){
          this.listenTo(this.tasks, 'remove', this.removeOne);
          
          this.listenTo(this.tasks, 'change:name', this.updateName);
+         this.listenTo(this.tasks, 'change:status', this.updateStatus);
       },
       events: {
          'click a'     : 'select',
+         'click #status': 'toggleStatus'
       },
       
       render: function() {
@@ -101,8 +103,16 @@ define('taskSidebar', function(require){
          });
       },
       updateName: function(model, value, option){
-         var item = this.$el.find('[data-id='+model.id+']');
+         var item = this.$el.find('[data-id='+model.id+'] #name');
          item.text(value);
+      },
+      updateStatus: function(model, value, option){
+         var item = this.$el.find('[data-id='+model.id+']');
+         if(value ==0){
+            item.removeClass('completed');
+         }else{
+            item.addClass('completed');
+         }
       },
       select: function(e){
          e.preventDefault();
@@ -111,6 +121,11 @@ define('taskSidebar', function(require){
          this.$el.find('a').removeClass('active');
          $target.addClass('active');
          this.trigger("select", $target.data('id'));
+      },
+      
+      toggleStatus:function(e){
+         var id = $(e.currentTarget).parent().data('id');      
+         this.tasks.get(id).toggle();
       }
    });
    return taskSidebarView;

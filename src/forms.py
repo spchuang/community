@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import BooleanField, TextField, PasswordField, DateTimeField, validators
+from wtforms import BooleanField, TextField, PasswordField, DateTimeField, validators, IntegerField
 from wtforms.validators import DataRequired
 
 class LoginForm(Form):
@@ -40,4 +40,5 @@ class TaskForm(Form):
    name     = TextField('name', [validators.Required()]) 
    summary  = TextField('summary')
    description = TextField('description')
+   status      = IntegerField('status', [validators.NumberRange(min=0, max=1)])
    

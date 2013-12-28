@@ -211,3 +211,29 @@ body {
 .post_comment .comment_content{
 
 }
+#task .task-side-item #status:hover{
+   cursor:pointer;
+   background-color: red;
+   
+}
+#task .task-side-item #status{
+   border: 1px solid #ddd;
+   width:20px;
+   height:20px;    
+}
+
+.task-side-item.completed #status .glyphicon{
+   opacity:1;
+}
+.task-side-item #status .glyphicon{
+   opacity:0;
+}
+
+#task .task-side-item #name{
+   margin-left: 30px;
+}
+#task .task-side-item.completed #name{
+   color: #a9a9a9;
+   text-decoration: line-through;
+}
+

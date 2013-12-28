@@ -13,14 +13,22 @@ define(function (require) {
          }
 
       },
+      toggle: function() {
+         //1=done, 0=not finished
+         var newStatus = 0;
+         if(this.get('status') == 0){
+            newStatus = 1;
+         }
+         this.save({status: newStatus}, {wait:true});
+         
+         
+      },
       validate: function (attrs) {
          
          if(attrs.name == ""){
             return "Task name can't be empty!";
          }
          return '';
-
-
       }
 
       /*

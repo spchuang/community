@@ -54,6 +54,7 @@ def update_task(c_id, t_id):
       t.name         = form.name.data
       t.summary      = form.summary.data
       t.description  = form.description.data
+      t.status       = form.status.data
       db.session.commit()
       updated_task = construct_task(c_id)(t)
       return jsonify(success = True, data= updated_task)

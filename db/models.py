@@ -204,6 +204,7 @@ class Task(db.Model):
          
          'created_on'   : dump_datetime(self.created_on),
          'modified_on'  : dump_datetime(self.modified_on),
+         'status'       : self.status
          #'assigned_to'  : self.assigned_to_user.serialize or None
       }
       if self.parent_id is not None:
