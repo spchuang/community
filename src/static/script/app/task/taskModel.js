@@ -12,7 +12,24 @@ define(function (require) {
             return response.data;
          }
 
+      },
+      validate: function (attrs) {
+         
+         if(attrs.name == ""){
+            return "Task name can't be empty!";
+         }
+         return '';
+
+
       }
+
+      /*
+      validate: function(attributes, options) {
+         console.log(attributes);
+         console.log(options);
+         if (typeof(options.error === 'function')) options.error();
+
+      }*/
    });
        
   
@@ -27,7 +44,13 @@ define(function (require) {
       parse: function(response) {
          return response.data;
       },
-     
+      /*
+      add: function(object, options) {
+         if (_.isArray(object) || !object.get('errors')) {
+           Backbone.Collection.prototype.add.call(this, object, options)
+         }
+         },
+      */
  
    });
 

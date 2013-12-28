@@ -51,7 +51,7 @@ requirejs.config({
 });
 
 //include csrf token to Backone in global scope
-define(['backbone'], function(Backbone){
+define(['backbone', 'jquery', 'underscore'], function(Backbone, $, _){
    var csrftoken = $('meta[name=csrf-token]').attr('content');
    var oldSync = Backbone.sync;
    Backbone.sync = function(method, model, options){
@@ -62,4 +62,25 @@ define(['backbone'], function(Backbone){
        }
       return oldSync(method, model, options);
    };
+   
+   //override backbone save to handle server validation errors
+   var oldSave = Backbone.Model.prototype.save;
+   Backbone.Model.prototype.save = function(){
+      var returnedValue = oldSave.apply(this, arguments),
+      deferred = new $.Deferred();
+      //console.log(deferred);
+      
+      if(_.isBoolean(returnedValue)){
+         this.validate(this.attributes);
+         deferred.reject(this.validationError || 'error');
+         return deferred.promise();
+      }
+      
+      
+      
+      return returnedValue;
+   }
+
 });
+
+

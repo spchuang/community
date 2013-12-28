@@ -72,6 +72,7 @@ define('taskSidebar', function(require){
          this.listenTo(this.tasks, 'reset', this.render);
          this.listenTo(this.tasks, 'remove', this.removeOne);
          
+         this.listenTo(this.tasks, 'change:name', this.updateName);
       },
       events: {
          'click a'     : 'select',
@@ -93,11 +94,15 @@ define('taskSidebar', function(require){
          _.each(this.tasks.last(this.tasks.length).reverse(), this.addOne, this);
       },
       
-      removeOne: function(task){
-         var item = this.$el.find('[data-id='+task.id+']');
+      removeOne: function(model){
+         var item = this.$el.find('[data-id='+model.id+']');
          item.fadeOut(300,function() {
              $(this).remove();
          });
+      },
+      updateName: function(model, value, option){
+         var item = this.$el.find('[data-id='+model.id+']');
+         item.text(value);
       },
       select: function(e){
          e.preventDefault();
@@ -119,24 +124,14 @@ define('mainView', function(require){
        editable      = require('editable'),
        tpl           = require('text!app/task/taskMainItemView.html');
 
-   $.fn.editable.defaults.mode = 'inline';
+
    var taskMainView = Backbone.View.extend({
    
       template: Handlebars.compile(tpl),
       initialize: function(options){
         this.$el = options.el;
-        this.$el.on('focus', '[contenteditable]', function() {
-            var $this = $(this);
-            $this.data('before', $this.html());
-            return $this;
-         }).on('blur keyup paste input', '[contenteditable]', function() {
-            var $this = $(this);
-            if ($this.data('before') !== $this.html()) {
-               $this.data('before', $this.html());
-               $this.trigger('change');
-            }
-            return $this;
-         });
+        this.$el.fadeOut();
+        this.editables = ['description', 'name','summary'];
         
       },
       events: {
@@ -145,26 +140,34 @@ define('mainView', function(require){
       renderEditable: function(fieldName){
          var that = this;
          this.$el.find('#'+fieldName).editable({
-            pk:  this.model.get('id'),
-            success     : function(response, newValue) {
+            showbuttons: 'bottom',
+            onblur: 'submit',
+            mode: 'inline',
+            url: function(params){
+               
+               return that.model.save(fieldName, params.value,{wait:true});
+               
+            },
+            success  : function(response, newValue) {
+               console.log("SUCCESS");
                that.model.set(fieldName, newValue);
-               that.model.save(fieldName, newValue);
-               console.log(self.model);
+               //console.log(t);
             }
-		
          });
       },
       
       render: function() {
+        
          this.$el.html(this.template(this.model.toJSON()));
          this.$el.find('.timeago').timeago();
-         this.renderEditable("description");
+         _.map(this.editables, this.renderEditable, this);
+     
          
          
          return this;
       },
+   
       delete: function(){
-        
          this.trigger('delete', this.model.id);
       },
       show: function(){
@@ -201,6 +204,7 @@ define(function (require) {
          this.tasks        = new models.TaskCollection({communityId: options.communityId}); 
          this.sidebarView  = new taskSidebarVIew({el: $("#task_sidebar"), collection: this.tasks});
          this.mainView     = new taskMainView({el: $("#task_main")});
+         
          this.listen();
          this.tasks.fetch({reset: true});
       },
@@ -217,10 +221,9 @@ define(function (require) {
          return this;
       },
       renderMainView: function(task_id){
-         this.mainView.show();
          this.mainView.model = this.tasks.get(task_id);
          this.mainView.render();
-         //load main view with the selected task
+         this.mainView.show();
       },
       openTaskModal: function(){
          this.taskModal.model = new models.Task();
@@ -251,10 +254,16 @@ define(function (require) {
             success: function(model, response){
                that.tasks.remove(model);
                that.mainView.hide();
-               
             }
          });
-      },
+      }
+      /*,
+      updateTask: function(id, fieldName, newValue){
+         //that.model.set(fieldName, newValue);
+         //that.model.save(fieldName, newValue);
+         //console.log(self.model);
+         console.log(fieldName);
+      }*/
       
       
    });
