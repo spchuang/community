@@ -170,12 +170,36 @@ define('mainView', function(require){
             }
          });
       },
+      renderAssignTo: function(){
+         $('#assigned_to').editable({
+            value: 2,    
+            mode: 'inline',
+            source: [
+               {value: 1, text: 'Justin Wei'},
+               {value: 2, text: 'Sean Pan'},
+               {value: 3, text: 'Sam Chuang'}
+            ]
+         }); 
+      },
+      renderPriority: function(){
+         $('#priority').editable({
+            value: 0,    
+            mode: 'inline',
+            source: [
+               {value: 0, text: 'low'},
+               {value: 1, text: 'mid'},
+               {value: 2, text: 'high'}
+            ]
+         }); 
+      },
       
       render: function() {
         
          this.$el.html(this.template(this.model.toJSON()));
          this.$el.find('.timeago').timeago();
          _.map(this.editables, this.renderEditable, this);
+         this.renderAssignTo();
+         this.renderPriority();
      
          
          

@@ -65,7 +65,7 @@ def update_event(c_id, e_id):
       db.session.commit()
       updated_event = construct_event(e.community_id)(e)
       return jsonify(success = True, data=updated_event)  
-      return jsonify(success = False, errors = form.errors)
+   return jsonify(success = False, errors = form.errors)
 		
 @api.route('/community/<c_id>/calendar/events/<e_id>',methods=['DELETE'])
 @login_required

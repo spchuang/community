@@ -4,9 +4,9 @@ from src.forms import CreateCommunityForm
 from db.models import Community, User, get_community_list
 from src import db
 
-api = Blueprint('communities', __name__, url_prefix='/api/communities')
+api = Blueprint('communities', __name__, url_prefix='/api')
 
-@api.route('/list', methods=['GET'])
+@api.route('/communities/list', methods=['GET'])
 @login_required
 def list():
 
@@ -42,7 +42,7 @@ def list():
    return jsonify(success = True, data= map(merge_com, com_list))
 
 
-@api.route('/create',methods=['POST'])
+@api.route('/communities/create',methods=['POST'])
 @login_required
 def create():
    form = CreateCommunityForm()
@@ -57,7 +57,7 @@ def create():
       return jsonify(success = True)
    return jsonify(success = False, errors = form.errors)
 
-@api.route('/join', methods=['POST'])
+@api.route('/communities/join', methods=['POST'])
 @login_required
 def join():
    c_id = request.args.get('c_id')
@@ -73,3 +73,12 @@ def join():
    db.session.add(g.user)
    db.session.commit()
    return jsonify(success = True)
+   
+   
+@api.route('/community/<int:c_id>/members', methods=['GET'])
+@login_required
+def get_members(c_id):
+   print c_id
+   members = Community().query.get(c_id).members.all()
+   print members
+   return jsonify(success = True, data=[m.serialize for m in members] )
