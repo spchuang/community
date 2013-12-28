@@ -87,6 +87,9 @@ define('taskSidebar', function(require){
       },
       addOne: function( task ) {
          var $newItem = $(this.template(task.toJSON()));
+         if(task.get('status') == 1){
+            $newItem.addClass("completed");
+         }
          this.$el.prepend($newItem);
          $newItem.find('.created_time').timeago();
       },
