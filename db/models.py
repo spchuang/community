@@ -62,6 +62,7 @@ class User(db.Model):
    email         = db.Column(db.String(120), index = True, unique = True, nullable=False)
    gender        = db.Column(db.SmallInteger, nullable=False)
    permission    = db.Column(db.SmallInteger, nullable=False, default=USER)
+   fb_id         = db.Column(db.BigInteger(unsigned=True), default=None)
 
    @property
    def serialize(self):
@@ -69,6 +70,7 @@ class User(db.Model):
       return {
          "first_name" : self.first_name.capitalize(),
          "last_name"  : self.last_name.capitalize(),
+         "name"       : self.first_name.capitalize() + ' ' + self.last_name.capitalize(),
          "user_id"    : self.id,
       }
 

@@ -174,15 +174,41 @@ define('mainView', function(require){
          });
       },
       renderAssignTo: function(){
+         var that = this;
          $('#assigned_to').editable({
             value: 2,    
             mode: 'inline',
-            source: [
+            /*source: [
                {value: 1, text: 'Justin Wei'},
                {value: 2, text: 'Sean Pan'},
                {value: 3, text: 'Sam Chuang'}
-            ]
-         }); 
+            ]*/
+            source: function(){
+               return [
+               {value: 1, text: 'Justin Wei'},
+               {value: 2, text: 'Sean Pan'},
+               {value: 3, text: 'Sam Chuang'}
+            ];
+               var result;
+               $.ajax({
+                  type: "GET",
+                  dataType: "json",
+                  url: '/api/community/'+that.model.get("community_id")+'/members'
+               }).done(function(response){
+                  var result;
+                  if(response.success){
+
+                     result = _.map(response.data, function(m){
+                        return {value: m.user_id, text: m.name}
+                     });
+                  }
+               });
+               return result;
+            }
+
+         });  
+
+    
       },
       renderPriority: function(){
          $('#priority').editable({

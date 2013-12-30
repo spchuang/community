@@ -18,6 +18,16 @@ from controllers.api.task import api as task_api
 def before_request():
     g.user = current_user
 	
+
+#http://stackoverflow.com/questions/14335892/flask-login-mechanisim-to-authenticate-per-token-my-calls
+
+
+@login_manager.user_loader
+def load_user(id):
+   print "load user " + id
+   return User.query.get(int(id))
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('status/404.html'), 404
@@ -26,14 +36,7 @@ def page_not_found(e):
 def internal_error(error):
    db.session.rollback()
    return render_template('status/404.html'), 500
-
-@login_manager.user_loader
-def load_user(id):
-   return User.query.get(int(id))
    
-#----------------------------------------
-# controllers
-#----------------------------------------
 @app.route('/')
 def show_entries():
    return redirect(url_for('home'))
