@@ -11,7 +11,15 @@
       <h2>Sign Up</h2>
       <h4>It's free and always will be.</h4>
       <hr>
+      <form action="{{ url_for('account.fb_signup') }}" method='post' class="form-horizontal " role="form">
+         <h5>You can either...</h5>
+         {{form.hidden_tag()}}
+         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up using Facebook</button>
+         <hr>
+      </form>
+      
       <form action="{{ url_for('account.signup') }}" method='post' class="form-horizontal " role="form">
+      <h5>or tell us about yourself</h5>
        {{form.hidden_tag()}}
          <div class="form-group">
             <div class="col-xs-6 col-sm-6">

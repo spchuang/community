@@ -12,6 +12,7 @@ mod = Blueprint('account', __name__, url_prefix='/account')
 @mod.route('/signup', methods=['GET', 'POST'])
 def signup():
    form = SignupForm()
+   
    if form.validate_on_submit():
       hashed_password = bcrypt.hashpw(form.password.data,bcrypt.gensalt())
 
@@ -26,9 +27,23 @@ def signup():
       return redirect(url_for('account.login'))
    return render_template('account/signup.html', form=form)
 
+@mod.route('/fb_signup', methods=['GET','POST'])
+def fb_signup():
+   '''
+   return redirect(url_for('account.fb_login'), code=307)
+   print session
+   me = facebook.get('/me')
+   form = SignupForm()
+   print me
+   '''
+   return render_template('account/signup.html', form=form)
+
+
+
 #this function is strictly for displaying the login page where the user can decide whether to use the default login fr the facebook login
 @mod.route('/login', methods=['GET'])
 def login():
+   
    #if user is already logged in, take him somewhere else
    if g.user.is_authenticated():
       return redirect(request.args.get('next') or url_for('community_page.list'))

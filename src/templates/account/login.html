@@ -4,9 +4,9 @@
 
 <div class="container">
 
-   <form action="{{ url_for('account.login') }}"  method=post class="form-signin">
+   <form action="{{ url_for('account.default_login') }}"  method=post class="form-signin">
       {{form.hidden_tag()}}
-      <h2 class="form-signin-heading">Please sign in</h2>
+      <h3 class="form-signin-heading">Log in</h3>
       {{ render_input_field(form.user_name, "User name") }}
       {{ render_input_field(form.password, "Password", "password") }}
       
@@ -16,7 +16,15 @@
       
       <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
    </form>
-	
+   
+   <form action="{{ url_for('account.fb_login') }}"  method=post class="form-signin">
+      
+      <h3>or</h3>
+      <hr>
+      {{form.hidden_tag()}}
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Log in with Facebook</button>
+   </form>
+   
 
 </div> <!-- /container -->
 
